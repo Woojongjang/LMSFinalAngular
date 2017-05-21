@@ -1,0 +1,75 @@
+<div ng-controller="libraryController" class="container">
+	<div class="page-header">
+		<h1>List of Library Branches in LMS</h1>
+	</div>
+	<div class="input-group">
+		<input type="text" class="form-control" ng-model="searchString"
+			placeholder="Search for..." ng-change="searchAuthors()">
+	</div>
+	<div class="col-md-10">
+		<ul class="pagination">
+			<li><a href="" ng-click="pagination.prevPage()">&laquo;</a></li>
+			<li ng-repeat="n in [] | range: pagination.numPages"
+				ng-class="{active: n == pagination.page}"><a href=""
+				ng-click="pagination.toPageId(n)">{{n + 1}}</a></li>
+			<li><a href="" ng-click="pagination.nextPage()">&raquo;</a></li>
+		</ul>
+	</div>
+	<label>Any: <input ng-model="search.$" ng-change="filter()"></label> <br>
+	<label>Name only <input ng-model="search.authorName" ng-change="filter()">	</label><br>
+	<label>Book only <input ng-model="searchBook.title" ng-change="filter()"></label><br>
+	<table class="table" id="authorsTable">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th><a ng-click="sort()">Author Name</a></th>
+				<th>Books</th>
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr
+				ng-repeat="a in authors | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
+				<td>{{$index+1+(10*pagination.page)}}</td>
+				<td>{{a.authorName}}</td>
+				<td><span ng-repeat="b in a.books | filter:searchBook:strict">{{b.title}} |</span>
+				<td><button type="button" class="btn btn-primary"
+						ng-click="showEditAuthorModal(a.authorId)">Update</button></td>
+				<td><button type="button" class="btn btn-danger">Delete</button></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="modal fade bs-example-modal-lg" id="editAuthorModal"
+		modal="editAuthorModal" tabindex="-1" role="dialog"
+		aria-labelledby="myLargeModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div>
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close" ng-click="closeModal()">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title">Update Author Details</h4>
+					</div>
+					<div class="modal-body">
+						<p>Enter the details of your Author:</p>
+						<input type="text" ng-model="author.authorName"> <br />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							ng-click="closeModal()">Close</button>
+						<button type="button" class="btn btn-primary"
+							ng-click="updateAuthor()">Update</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- <pre>{{author | json}}</pre> -->
+	</div>
+
+
+</div>
+
+

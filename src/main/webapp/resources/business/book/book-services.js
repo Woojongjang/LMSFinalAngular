@@ -1,4 +1,4 @@
-lmsApp.factory("authorService", function($http, authorConstants){
+lmsApp.factory("bookService", function($http, authorConstants){
 	return{
 		initAuthorService: function(){
 			var getAuthorData = {};

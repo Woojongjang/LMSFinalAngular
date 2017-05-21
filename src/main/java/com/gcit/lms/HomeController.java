@@ -23,7 +23,7 @@ import com.gcit.lms.service.AdminService;
 /**
  * Handles requests for the application home page.
  */
-@Controller
+@RestController
 public class HomeController {
 
 	@Autowired
@@ -35,27 +35,27 @@ public class HomeController {
 	@Autowired
 	AdminService adminService;
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
-		return "welcome";
-	}
+//	@RequestMapping(value = "/", method = RequestMethod.GET)
+//	public String home(Locale locale, Model model) {
+//		return "welcome";
+//	}
+//
+//	@RequestMapping(value = "/admin", method = RequestMethod.GET)
+//	public String admin(Locale locale, Model model) {
+//		return "admin";
+//	}
+//
+//	@RequestMapping(value = "/author", method = RequestMethod.GET)
+//	public String author(Locale locale, Model model) {
+//		return "author";
+//	}
+//
+//	@RequestMapping(value = "/addAuthor", method = RequestMethod.GET)
+//	public String addAuthor(Locale locale, Model model) {
+//		return "addauthor";
+//	}
 
-	@RequestMapping(value = "/admin", method = RequestMethod.GET)
-	public String admin(Locale locale, Model model) {
-		return "admin";
-	}
-
-	@RequestMapping(value = "/author", method = RequestMethod.GET)
-	public String author(Locale locale, Model model) {
-		return "author";
-	}
-
-	@RequestMapping(value = "/addAuthor", method = RequestMethod.GET)
-	public String addAuthor(Locale locale, Model model) {
-		return "addauthor";
-	}
-
-	@RequestMapping(value = "/viewAuthors", method = RequestMethod.GET)
+	@RequestMapping(value = "/viewSimpleAuthors", method = RequestMethod.GET)
 	public String viewAuthors(Locale locale, Model model) {
 		List<Author> authors = new ArrayList<Author>();
 		try {
@@ -67,7 +67,7 @@ public class HomeController {
 		return "viewauthors";
 	}
 	
-	@RequestMapping(value = "/viewParamTest/{pageNo}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/viewAuthors/{pageNo}", method = RequestMethod.GET, produces = "application/json")
 	public List<Author> viewTestParam(@PathVariable Integer pageNo,
 			@RequestParam(value = "searchString", required = false) String searchString) {
 		List<Author> authors = new ArrayList<>();

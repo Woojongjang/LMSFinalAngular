@@ -100,36 +100,5 @@ lmsApp.controller("authorController", function($scope, $http, $window, $location
 			$scope.pagination = Pagination.getNew(10);
 			$scope.pagination.numPages = Math.ceil($scope.authors.length / $scope.pagination.perPage);
 		});
-		//$scope.authors.
-//		var filtered = [];
-//		searchText = searchText.toLowerCase();
-//		alert("testsearchAuth");
-//		angular.forEach($scope.authors, function(author) {
-//		    if( author.authorName.toLowerCase().indexOf(searchText) >= 0 ) { // search for author name
-//		    	filtered.push(author);
-//		    }
-//		    else if (true) { //search for other things
-//		    	filtered.push(author);
-//		    }
-//		});
-//		alert("testsearchAuth");
-//		$scope.authors = filtered;
 	}
-	
-//	$scope.filter = function(){
-//		$http.get("http://localhost:8080/lms/searchAuthors/"+$scope.searchString).success(function(data){
-//			$scope.authors = data;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.authors.length / $scope.pagination.perPage);
-//		});
-//	}
-	
-//	$scope.$watch('search', function(term) {
-	//ADD filterFilter on controller
-//	    // Create filtered 
-//	    $scope.filtered = filterFilter($scope.authors, term);  
-//
-//	    // Then calculate noOfPages
-//	    $scope.pagination.numPages = Math.ceil($scope.filtered.length/$scope.pagination.perPage);  
-//	})
 })

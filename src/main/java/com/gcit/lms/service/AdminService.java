@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gcit.lms.dao.AuthorDAO;
@@ -47,8 +48,15 @@ public class AdminService {
 	@Autowired
 	BorrowerDAO brdao;
 	
+	//-------------AUTHOR SERVICES-------------//
+	
+	@RequestMapping(value = "/initAuthor", method = RequestMethod.GET, produces="application/json")
+	public Author initAuthor() {
+		return new Author();
+	}
+	
 	@Transactional
-	@RequestMapping(value = "/Authors", method = RequestMethod.POST, consumes="application/json")
+	@RequestMapping(value = "/Authors", method = RequestMethod.POST, consumes="application/json", produces="text/plain")
 	public String addAuthor(@RequestBody Author author) {
 		try {
 			adao.addAuthor(author);
@@ -58,19 +66,154 @@ public class AdminService {
 		return "AUTHOR ADDED";
 	}
 	
-	@Transactional
-	@RequestMapping(value = "/Authors/{authorId}", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public Author editAuthor(@RequestBody Author author, @PathVariable Integer authorId) {
+	// Post Update Author with known id 
+//	@Transactional
+//	@RequestMapping(value = "/Authors/{authorId}", method = RequestMethod.POST, consumes="application/json")
+//	public String authorExistUpdate(@RequestBody Author author, @PathVariable Integer authorId) {
+//		try {
+//			// if authorId is an existing Id, have the http method update value
+//			// if id is new (non-existing resource), have method return error
+//			author.setAuthorId(authorId);
+//			adao.updateAuthor(author);
+//		} catch (ClassNotFoundException | SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return "AUTHOR UPDATED";
+//	}
+	
+	@RequestMapping(value = "/searchAuthors/{authorName}", method = RequestMethod.GET, produces="application/json")
+	public List<Author> getAuthorsByName(@PathVariable String authorName) {
+
 		try {
-			author.setAuthorId(authorId);
-			adao.updateAuthor(author);
-			return adao.readAuthorByID(authorId);
+			return adao.readAuthorsByName(authorName);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
+	@RequestMapping(value = "/Authors", method = RequestMethod.GET, produces = "application/json")
+	public List<Author> getAllAuthors(@RequestParam(value="pageNo",required=false) Integer pageNo, 
+			@RequestParam(value = "searchString", required = false) String searchString) {
+		List<Author> authors = new ArrayList<>();
+		try {
+			if (searchString!=null && searchString.length()>0) {
+				authors = adao.readAuthorsByName(pageNo, searchString);
+			} else 
+			if (pageNo!=null&&pageNo>0) {
+				authors = adao.readAllAuthors(pageNo);
+			}
+			else {
+				authors = adao.readAllAuthors(null);
+			}
+			for (Author a : authors) {
+				a.setBooks(bdao.readAllBooksByAuthorID(a.getAuthorId()));
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return authors;
+	}
+	
+	@RequestMapping(value = "/Authors/{authorId}", method = RequestMethod.GET, produces = "application/json")
+	public Author getAuthorById(@PathVariable Integer authorId) {
+		try {
+			Author author = adao.readAuthorByID(authorId);
+			author.setBooks(bdao.readAllBooksByAuthorID(authorId));
+			return author;
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Transactional
+	@RequestMapping(value = {"/Authors", "/Authors/{authorId}"}, method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	public Author editCreateAuthor(@RequestBody Author author, @PathVariable Optional<Integer> authorId) {
+		try {
+			if(authorId.isPresent()) {
+				author.setAuthorId(authorId.get());
+			}
+			adao.updateOrCreateAuthor(author);
+			return adao.readAuthorByID(author.getAuthorId());
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/Authors/{authorId}", method = RequestMethod.DELETE, produces="text/plain")
+	public String deleteAuthor(@PathVariable Integer authorId) {
+		try {
+			Author author = new Author();
+			author.setAuthorId(authorId);
+			adao.deleteAuthor(author);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return "AUTHOR DELETED";
+	}
+
+	//-------------BOOK SERVICES-------------//
+	
+	@RequestMapping(value = "/initBook", method = RequestMethod.GET, produces="application/json")
+	public Book initBook() {
+		return new Book();
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/Books", method = RequestMethod.POST, consumes="application/json", produces = "application/json")
+	public Book addBook(@RequestBody Book book) {
+		try {
+			// EDIT BookDAO for addBookWithID to work with returning generated key
+			Integer bookId = bdao.addBookWithID(book);
+//			List<Author> bookAuthors = book.getAuthors();
+//			List<Genre> bookGenres = book.getGenres();
+//			Publisher bookPublisher = book.getPublisher();
+//			if(bookAuthors!=null && !bookAuthors.isEmpty()) {
+//				for(Author bAuthElem : bookAuthors) {
+//					bdao.addBookAuthors(bookId,bAuthElem.getAuthorId());
+//				}
+//			}
+//			if(bookGenres!=null && !bookGenres.isEmpty()) {
+//				for(Genre bGenreElem : bookGenres) {
+//					bdao.addBookGenres(bookId,bGenreElem.getGenreId());
+//				}
+//			}
+//			if(bookPublisher!=null) {
+//				bdao.addBookPublisher(bookId,bookPublisher.getPublisherId());
+//			}
+			return book;
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping(value="/Books", method = RequestMethod.GET, produces = "application/json")
+	public List<Book> getAllBooks(@RequestParam(value="pageNo",required=false) Integer pageNo, 
+			@RequestParam(value = "searchString", required = false) String searchString) {
+		try {
+			return bdao.readAllBooks(pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/Books/{bookId}", method = RequestMethod.GET, produces = "application/json")
+	public Author getBookById(@PathVariable Integer authorId) {
+		try {
+			Author author = adao.readAuthorByID(authorId);
+			author.setBooks(bdao.readAllBooksByAuthorID(authorId));
+			return author;
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Transactional
 	public void editBook(Book book) {
 		try {
@@ -81,26 +224,9 @@ public class AdminService {
 	}
 	
 	@Transactional
-	public void addBook(Book book) {
+	public void deleteBook(Book book) {
 		try {
-			// EDIT BookDAO for addBookWithID to work with returning generated key
-			Integer bookId = bdao.addBookWithID(book);
-			List<Author> bookAuthors = book.getAuthors();
-			List<Genre> bookGenres = book.getGenres();
-			Publisher bookPublisher = book.getPublisher();
-			if(bookAuthors!=null && !bookAuthors.isEmpty()) {
-				for(Author bAuthElem : bookAuthors) {
-					bdao.addBookAuthors(bookId,bAuthElem.getAuthorId());
-				}
-			}
-			if(bookGenres!=null && !bookGenres.isEmpty()) {
-				for(Genre bGenreElem : bookGenres) {
-					bdao.addBookGenres(bookId,bGenreElem.getGenreId());
-				}
-			}
-			if(bookPublisher!=null) {
-				bdao.addBookPublisher(bookId,bookPublisher.getPublisherId());
-			}
+			bdao.deleteBook(book);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
@@ -176,37 +302,6 @@ public class AdminService {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public List<Book> getAllBooks(Integer pageNo) {
-		try {
-			return bdao.readAllBooks(pageNo);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	@Transactional
-	@RequestMapping(value = {"/Authors", "/Authors/{pageNo}", "/Authors/{pageNo}/{searchString}"}, method = RequestMethod.GET, produces = "application/json")
-	public List<Author> getAllAuthors(@PathVariable Optional<Integer> pageNo, @PathVariable Optional<String> searchString) {
-		List<Author> authors = new ArrayList<>();
-		try {
-			if (searchString.isPresent()) {
-				authors = adao.readAuthorsByName(pageNo.get(), searchString.get());
-			} else if (pageNo.isPresent()) {
-				authors = adao.readAllAuthors(pageNo.get());
-			}
-			else {
-				authors = adao.readAllAuthors(null);
-			}
-			for (Author a : authors) {
-				a.setBooks(bdao.readAllBooksByAuthorID(a.getAuthorId()));
-			}
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-		return authors;
 	}
 	
 //	@Transactional
@@ -330,24 +425,6 @@ public class AdminService {
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	@Transactional
-	public void deleteAuthor(Author author) {
-		try {
-			adao.deleteAuthor(author);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Transactional
-	public void deleteBook(Book book) {
-		try {
-			bdao.deleteBook(book);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	@Transactional

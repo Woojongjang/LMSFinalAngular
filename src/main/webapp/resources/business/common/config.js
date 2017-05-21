@@ -9,7 +9,7 @@ lmsApp.config(["$routeProvider", function($routeProvider){
 		templateUrl: "author.html"
 	}).when("/viewauthors",{
 		templateUrl: "viewauthors.html"
-	}).when("/addauthor",{
-		templateUrl: "addauthor.html"
+	}).when("/viewbooks",{
+		templateUrl: "viewbooks.html"
 	})
 }])

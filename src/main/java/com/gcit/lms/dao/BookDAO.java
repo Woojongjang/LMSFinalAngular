@@ -1,29 +1,46 @@
 package com.gcit.lms.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
 import com.gcit.lms.entity.Genre;
 import com.gcit.lms.entity.Publisher;
+//import com.mysql.jdbc.PreparedStatement;
 
 public class BookDAO extends BaseDAO implements ResultSetExtractor<List<Book>>{
-
+	
 	public void addBook(Book book) throws ClassNotFoundException, SQLException{
 		template.update("insert into tbl_book (title) values (?)", new Object[] {book.getTitle()}, this);
 	}
 	
 	public Integer addBookWithID(Book book) throws ClassNotFoundException, SQLException{
-		//KeyHolder holder = new GeneratedKeyHolder();
-		//template.
-		return template.update("insert into tbl_book (title) values (?)", new Object[] {book.getTitle()}, this);
+		final String INSERT_SQL = "insert into tbl_book (title) values (?)";
+
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		template.update(
+		    new PreparedStatementCreator() {
+		        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+		        	PreparedStatement ps = connection.prepareStatement(INSERT_SQL, new String[] {"bookId"});
+		            ps.setString(1, book.getTitle());
+		            return ps;
+		        }
+		    },
+		    keyHolder);
+		return keyHolder.getKey().intValue();
+		//return template.update("insert into tbl_book (title) values (?)", new Object[] {book.getTitle()}, this);
 	}
 	
 	public void addBookAuthors(Integer bookId, Integer authorId) throws ClassNotFoundException, SQLException{
