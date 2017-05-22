@@ -34,7 +34,7 @@
 				ng-repeat="a in authors | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
 				<td>{{$index+1+(10*pagination.page)}}</td>
 				<td>{{a.authorName}}</td>
-				<td><span ng-repeat="b in a.books | filter:searchBook:strict">{{b.title}} |</span>
+				<td><span ng-repeat="b in a.books | filter:searchBook:strict">{{b.title}} |</span></td>
 				<td><button type="button" class="btn btn-primary"
 						ng-click="showEditAuthorModal(a.authorId)">Update</button></td>
 				<td><button type="button" class="btn btn-danger" ng-click="authorDelete(a.authorId)">Delete</button></td>
@@ -52,13 +52,14 @@
 							aria-label="Close" ng-click="closeModal()">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4 class="modal-title" id="authorModalTitle">New Author Details</h4>
+						<h4 class="modal-title" id="authorModalTitle">Update Author Details</h4>
 					</div>
 					<div class="modal-body" ng-form name="myForm">
 						<p>Enter the details of your Author:</p>
 						<input name="myInput" type="text" ng-model="author.authorName" required
 							ng-trim="false" placeholder="Enter Name..."> <br />
 						<div role="alert">
+						<tt>author Named = {{author.authorName}}</tt><br/>
 							<span class="error" ng-show="myForm.myInput.$error.required" style="color:red">
 								Author Name Required!</span>
 						</div>
@@ -67,12 +68,12 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							ng-click="closeModal()">Close</button>
 						<button type="button" class="btn btn-primary"
-							ng-click="updateAuthor()">Update</button>
+							ng-click="updateAuthor()" id="modalSave">Update</button>
 					</div>
 				</div>
 			</div>
 		</div>
-		<pre>{{add}}</pre>
+		<!-- <pre>{{add}}</pre> -->
 		<!-- <pre>{{author | json}}</pre> -->
 	</div>
 

@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Book implements Serializable{
 	
-	private static final long serialVersionUID = -1070838265691816263L;
-
+	private static final long serialVersionUID = -2735409337846269788L;
+	
 	private Integer bookId;
 	private String title;
 	private List<Author> authors;
@@ -99,18 +99,20 @@ public class Book implements Serializable{
 		}
 		return genreString;
 	}
+	
+/**
+	 * @return the genres
+	 */
+	public List<Genre> getGenres() {
+		return genres;
+	}
 	/**
 	 * @param genres the genres to set
 	 */
 	public void setGenres(List<Genre> genres) {
 		this.genres = genres;
 	}
-	
-	public List<Genre> getGenres() {
-		return genres;
-	}
-	
-//	public String getDetails() {
+	//	public String getDetails() {
 //		String details = this.publisher.getPublisherName();
 //		if(this.authors!=null && !this.authors.isEmpty()) {
 //			for(Author a : this.authors) {

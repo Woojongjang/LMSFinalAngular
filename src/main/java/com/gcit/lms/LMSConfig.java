@@ -17,12 +17,14 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.gcit.lms.dao.AuthorDAO;
+import com.gcit.lms.dao.BookBranchCountDAO;
 import com.gcit.lms.dao.BookDAO;
 import com.gcit.lms.dao.BookLoanDAO;
 import com.gcit.lms.dao.BorrowerDAO;
 import com.gcit.lms.dao.GenreDAO;
 import com.gcit.lms.dao.LibraryBranchDAO;
 import com.gcit.lms.dao.PublisherDAO;
+import com.gcit.lms.entity.BookBranchCount;
 import com.gcit.lms.service.AdminService;
 import com.gcit.lms.service.BookLoanService;
 import com.gcit.lms.service.BorrowerService;
@@ -90,6 +92,11 @@ public class LMSConfig {
 	@Bean
 	public BookLoanDAO bldao(){
 		return new BookLoanDAO();
+	}
+	
+	@Bean
+	public BookBranchCountDAO bbcdao(){
+		return new BookBranchCountDAO();
 	}
 	
 	@Bean

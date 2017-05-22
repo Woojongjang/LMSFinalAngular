@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Genre;
 /**
  * This is a DAO
@@ -43,6 +44,13 @@ public class GenreDAO extends BaseDAO implements ResultSetExtractor<List<Genre>>
 			return genres.get(0);
 		}
 		return null;
+	}
+	
+	public List<Genre> readGenreByBookID(Integer bookID) throws ClassNotFoundException, SQLException {
+		List<Genre> genres = template.query(
+				"select * from tbl_genre where genre_id in (select genre_id from tbl_book_genres where bookId = ?)",
+				new Object[] { bookID }, this);
+		return genres;
 	}
 	
 	public List<Genre> readGenresByName(String  genreName) throws ClassNotFoundException, SQLException{

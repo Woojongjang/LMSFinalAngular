@@ -1,24 +1,36 @@
 lmsApp.factory("libraryService", function($http, libraryConstants){
+	var branchStore = {};
+	
+	var setData = function(data, key){
+		branchStore[key] = data;
+	};
+	var getData = function(key){
+		return branchStore[key];
+	};
 	return{
+		setData: setData,
+		getData: getData,
 		getAllLibrariesService: function(){
 			var getBranchData = {};
 			return $http({
-				url: libraryConstants.GET_AUTHORS
+				url: libraryConstants.LIBRARIES_URL,
+				method: "GET"
 			}).success(function(data){
 				getBranchData = data;
 			}).then(function(){
 				return getBranchData;
 			})
 		},
-	
-		getAuthorByPKService: function(authorId){
-			var getAuthorByPkData = {};
+		
+		getBranchBooksService: function(branchId){
+			var getBranchBookData = {};
 			return $http({
-				url: authorConstants.GET_AUTHORS+authorId
+				url: libraryConstants.LIBRARIES_URL+branchId+"/Books",
+				method: "GET"
 			}).success(function(data){
-				getAuthorByPkData = data;
+				getBranchBookData = data;
 			}).then(function(){
-				return getAuthorByPkData;
+				return getBranchBookData;
 			})
 		},
 		

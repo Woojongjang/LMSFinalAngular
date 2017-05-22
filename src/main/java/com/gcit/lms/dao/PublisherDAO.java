@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import com.gcit.lms.entity.Genre;
 import com.gcit.lms.entity.Publisher;
 /**
  * This is a DAO
@@ -40,6 +41,16 @@ public class PublisherDAO extends BaseDAO implements ResultSetExtractor<List<Pub
 	
 	public Publisher readPublisherByID(Integer publisherID) throws ClassNotFoundException, SQLException{
 		List<Publisher> publishers = template.query("select * from tbl_publisher where publisherId = ?", new Object[]{publisherID}, this);
+		if(publishers!=null && !publishers.isEmpty()){
+			return publishers.get(0);
+		}
+		return null;
+	}
+	
+	public Publisher readPublisherByBookID(Integer bookID) throws ClassNotFoundException, SQLException {
+		List<Publisher> publishers = template.query(
+				"select * from tbl_publisher where publisherId in (select pubId from tbl_book where bookId = ?)",
+				new Object[] { bookID }, this);
 		if(publishers!=null && !publishers.isEmpty()){
 			return publishers.get(0);
 		}

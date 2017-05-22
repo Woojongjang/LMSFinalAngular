@@ -1,6 +1,6 @@
-<div ng-controller="bookController" class="container">
+<div ng-controller="libraryController" class="container">
 	<div class="page-header">
-		<h1>List of Books in LMS</h1>
+		<h1 id="viewHeader">List of Books in LMS Branch</h1>
 	</div>
 	<button type="button" class="btn btn-success" ng-click="addBook()">Add New Book</button><br/><br/>
 	<div class="input-group">
@@ -23,21 +23,17 @@
 			<tr>
 				<th>#</th>
 				<th><a ng-click="sort()">Book Title</a></th>
-				<th>Authors</th>
-				<th>Publisher</th>
-				<th>Genres</th>
+				<th>Numbers</th>
 				<th>Update</th>
 				<th>Delete</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr
-				ng-repeat="b in books | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
-				<td>{{$index+1+(10*pagination.page)}}</td>
+				ng-repeat="b in branch.books | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
+				<td>{{$index+1}}</td>
 				<td>{{b.title}}</td>
-				<td><span ng-repeat="a in b.authors">{{a.authorName}} |</span></td>
-				<td>{{b.publisher.publisherName}}</td>
-				<td><span ng-repeat="g in b.genres">{{g.genreName}} |</span></td>
+				<td>{{branch.booksCount[b.bookId]}}</td>
 				<td><button type="button" class="btn btn-primary"
 						ng-click="showEditModal(b)">Update</button></td>
 				<td><button type="button" class="btn btn-danger" ng-click="dataDelete(b.bookId)">Delete</button></td>
@@ -55,28 +51,19 @@
 							aria-label="Close" ng-click="closeModal()">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4 class="modal-title" id="modalTitle">Update Book Details</h4>
+						<h4 class="modal-title" id="modalTitle">Adding Book Entry for Branch</h4>
 					</div>
 					<div class="modal-body" ng-form name="myForm">
-						<p>Enter the details of the Book:</p>
-						<input name="myInput" type="text" ng-model="book.title" required
-							ng-trim="false" placeholder="Enter Title..."> <br />
+						Book Name: <p class="text-info">{{book.title}}</p>
+						Branch Name: <p class="text-info">{{branch.branchName}}</p>
+						<label for="newCount">Select Number of Books to Add:</label>
+						<input type="number" class="form-control" name="newCount" id="newCount" ng-model="addCount" required
+							placeholder="Input How Many Books to Add..." min="-{{branch.booksCount[book.bookId]}}">
 						<div role="alert">
-							<span class="error" ng-show="myForm.myInput.$error.required" style="color:red">
-								Book Name Required!</span>
+							<span class="error" ng-show="myForm.newCount.$error.required"
+								style="color: red"> Number of Books to Add Required!</span>
 						</div>
-						<label for="selauth">Select Author(s) of the Book (hold ctrl to select more than one):</label>
-						<select multiple class="form-control" ng-model="book.authors" id="selauth" size="5" 
-							ng-options="a as a.authorName for a in authors track by a.authorId"></select>
-						<!-- <tt>{{book.title}}'s authors Selected = {{book.authors}}</tt><br/> -->
-						<label for="selpub">Select Publisher of the Book:</label>
-						<select class="form-control" ng-model="book.publisher" id="selpub" size="5" 
-							ng-options="p as p.publisherName for p in publishers track by p.publisherId"></select>
-						<!-- <tt>{{book.title}}'s publisher Selected = {{book.publisher}}</tt><br/> -->
-						<label for="selgenr">Select Genre(s) of the Book (hold ctrl to select more than one):</label>
-						<select multiple class="form-control" ng-model="book.genres" id="selgenr" size="5" 
-						ng-options="g as g.genreName for g in genres track by g.genreId"></select>
-						<!-- <tt>{{book.title}}'s genres Selected = {{book.genres}}</tt><br/> -->
+						<tt>Count of the Book = {{branch.booksCount[book.bookId]}}</tt><br/>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal"

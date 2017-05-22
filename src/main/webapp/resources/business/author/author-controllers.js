@@ -15,15 +15,17 @@ lmsApp.controller("authorController", function($scope, $http, $window, $location
 //		$location.path('/addauthor');
 		authorService.initAuthorService().then(function(data){
 			$scope.author = data;
-			$scope.author.authorName = "";
+//			$scope.author.authorName = "";
 			$scope.add = true;
 			document.getElementById("authorModalTitle").innerHTML = "Add New Author Details";
+			document.getElementById("modalSave").innerHTML = "Add";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-success");
 			$scope.editAuthorModal = true;
 		});
 	}
 	
 	$scope.authorDelete = function(authorId) {
-		var response = "";
+//		var response = "";
 		authorService.deleteAuthorService(authorId).then(function(data){
 			alert(data);
 			//response = data;
@@ -50,6 +52,8 @@ lmsApp.controller("authorController", function($scope, $http, $window, $location
 			$scope.add = false;
 			$scope.author = data;
 			document.getElementById("authorModalTitle").innerHTML = "Update Author Details";
+			document.getElementById("modalSave").innerHTML = "Update";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-primary");
 			$scope.editAuthorModal = true;
 		});
 	}
@@ -65,7 +69,7 @@ lmsApp.controller("authorController", function($scope, $http, $window, $location
 	
 	$scope.updateAuthor = function(){
 		if($scope.add) {
-			if($scope.author.authorName === ""){
+			if($scope.author.authorName === "" || $scope.author.authorName === undefined || $scope.author.authorName === null){
 				alert("author name is empty");
 				$scope.editAuthorModal = true;
 			}
@@ -82,14 +86,20 @@ lmsApp.controller("authorController", function($scope, $http, $window, $location
 			}
 		}
 		else {
-			$http.put("http://localhost:8080/lms/Authors/", $scope.author).success(function(){
-				authorService.getAllAuthorsService().then(function(backendAuthorsList){
-					$scope.authors = backendAuthorsList;
-					$scope.pagination = Pagination.getNew(10);
-					$scope.pagination.numPages = Math.ceil($scope.authors.length / $scope.pagination.perPage);
+			if($scope.author.authorName === "" || $scope.author.authorName === undefined || $scope.author.authorName === null){
+				alert("author name is empty");
+				$scope.editAuthorModal = true;
+			}
+			else {
+				$http.put("http://localhost:8080/lms/Authors/", $scope.author).success(function(){
+					authorService.getAllAuthorsService().then(function(backendAuthorsList){
+						$scope.authors = backendAuthorsList;
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.authors.length / $scope.pagination.perPage);
+					});
 				});
-			});
-			$scope.editAuthorModal = false;
+				$scope.editAuthorModal = false;
+			}
 		}
 //		$scope.editAuthorModal = false;
 	}

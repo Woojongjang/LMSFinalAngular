@@ -5,8 +5,11 @@ import java.util.List;
 
 public class Author implements Serializable{
 	
-	private static final long serialVersionUID = 9151170513668626160L;
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9151170513668626160L;
 	private Integer authorId;
 	private String authorName;
 	private List<Book> books;

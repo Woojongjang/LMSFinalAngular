@@ -21,9 +21,9 @@ import com.gcit.lms.entity.Publisher;
 //import com.mysql.jdbc.PreparedStatement;
 
 public class BookDAO extends BaseDAO implements ResultSetExtractor<List<Book>>{
-	
+
 	public void addBook(Book book) throws ClassNotFoundException, SQLException{
-		template.update("insert into tbl_book (title) values (?)", new Object[] {book.getTitle()}, this);
+		template.update("insert into tbl_book (title) values (?)", new Object[] {book.getTitle()});
 	}
 	
 	public Integer addBookWithID(Book book) throws ClassNotFoundException, SQLException{
@@ -40,27 +40,31 @@ public class BookDAO extends BaseDAO implements ResultSetExtractor<List<Book>>{
 		    },
 		    keyHolder);
 		return keyHolder.getKey().intValue();
-		//return template.update("insert into tbl_book (title) values (?)", new Object[] {book.getTitle()}, this);
+		//return template.update("insert into tbl_book (title) values (?)", new Object[] {book.getTitle()});
 	}
 	
-	public void addBookAuthors(Integer bookId, Integer authorId) throws ClassNotFoundException, SQLException{
-		template.update("insert into tbl_book_authors values (?, ?)", new Object[] {bookId, authorId}, this);
+	public void addBookAuthors(Book book, Author author) throws ClassNotFoundException, SQLException{
+		template.update("insert into tbl_book_authors values (?, ?)", new Object[] {book.getBookId(), author.getAuthorId()});
+	}
+	
+	public void addBookAuthorInteger(Integer bookId, Integer authorId) throws ClassNotFoundException, SQLException{
+		template.update("insert into tbl_book_authors (bookId, authorId) values (?, ?)", new Object[] {bookId, authorId});
 	}
 	
 	public void addBookGenres(Integer bookId, Integer genreId) throws ClassNotFoundException, SQLException{
-		template.update("insert into tbl_book_genres values (?, ?)", new Object[] {genreId, bookId}, this);
+		template.update("insert into tbl_book_genres values (?, ?)", new Object[] {genreId, bookId});
 	}
 	
 	public void addBookPublisher(Integer bookId, Integer pubId) throws ClassNotFoundException, SQLException{
-		template.update("update tbl_book set pubId = ? where bookId = ?", new Object[] {pubId, bookId}, this);
+		template.update("update tbl_book set pubId = ? where bookId = ?", new Object[] {pubId, bookId});
 	}
 	
 	public void deleteBookAuthors(Integer bookId) throws ClassNotFoundException, SQLException{
-		template.update("delete from tbl_book_authors where bookId = ?", new Object[] {bookId}, this);
+		template.update("delete from tbl_book_authors where bookId = ?", new Object[] {bookId});
 	}
 	
 	public void deleteBookGenres(Integer bookId) throws ClassNotFoundException, SQLException{
-		template.update("delete from tbl_book_genres where bookId = ?", new Object[] {bookId}, this);
+		template.update("delete from tbl_book_genres where bookId = ?", new Object[] {bookId});
 	}
 	
 	public void updateBook(Book book) throws ClassNotFoundException, SQLException{
@@ -69,7 +73,7 @@ public class BookDAO extends BaseDAO implements ResultSetExtractor<List<Book>>{
 		if(bookAuthors!=null && !bookAuthors.isEmpty()) {
 			deleteBookAuthors(book.getBookId());
 			for(Author bAuthElem : bookAuthors) {
-				addBookAuthors(book.getBookId(),bAuthElem.getAuthorId());
+				addBookAuthors(book,bAuthElem);
 			}
 		}
 		else {
@@ -85,21 +89,47 @@ public class BookDAO extends BaseDAO implements ResultSetExtractor<List<Book>>{
 			deleteBookGenres(book.getBookId());
 		}
 		if(book.getPublisher()!=null) {
-//			System.out.println("UPDATING PUB ID:" +book.getPublisher().getPublisherId());
-//			System.out.println("UPDATING BOOK ID:" +book.getBookId());
-			template.update("update tbl_book set pubId = ? where bookId = ?",
-					new Object[]{book.getPublisher().getPublisherId(), book.getBookId()}, this);
+			if(book.getPublisher().getPublisherId()!=null && book.getPublisher().getPublisherId()>0){
+				template.update("update tbl_book set pubId = ? where bookId = ?",
+						new Object[]{book.getPublisher().getPublisherId(), book.getBookId()});
+			}
 		}
 		else {
 			template.update("update tbl_book set pubId = ? where bookId = ?",
-					new Object[]{null, book.getBookId()}, this);
+					new Object[]{null, book.getBookId()});
 		}
 		template.update("update tbl_book set title = ? where bookId = ?",
-				new Object[]{book.getTitle(), book.getBookId()}, this);
+				new Object[]{book.getTitle(), book.getBookId()});
+	}
+	
+	public void updateOrCreateBook(Book book) throws ClassNotFoundException, SQLException {
+		List<Book> books = template.query("select * from tbl_book where bookId = ?",
+				new Object[] { book.getBookId() }, this);
+		if (books != null && books.size() > 0) {
+			updateBook(book);
+		} else {
+			Integer bookId = addBookWithID(book);
+			List<Author> bookAuthors = book.getAuthors();
+			List<Genre> bookGenres = book.getGenres();
+			Publisher bookPublisher = book.getPublisher();
+			if(bookAuthors!=null && !bookAuthors.isEmpty()) {
+				for(Author bAuthElem : bookAuthors) {
+					addBookAuthors(book,bAuthElem);
+				}
+			}
+			if(bookGenres!=null && !bookGenres.isEmpty()) {
+				for(Genre bGenreElem : bookGenres) {
+					addBookGenres(bookId,bGenreElem.getGenreId());
+				}
+			}
+			if(bookPublisher!=null) {
+				addBookPublisher(bookId,bookPublisher.getPublisherId());
+			}
+		}
 	}
 	
 	public void deleteBook(Book book) throws ClassNotFoundException, SQLException{
-		template.update("delete from tbl_book where bookId = ?", new Object[] {book.getBookId()}, this);
+		template.update("delete from tbl_book where bookId = ?", new Object[] {book.getBookId()});
 	}
 	
 	public Book readBookByID(Integer bookID) throws ClassNotFoundException, SQLException{
@@ -121,22 +151,26 @@ public class BookDAO extends BaseDAO implements ResultSetExtractor<List<Book>>{
 	}
 	
 	public List<Book> readBooksByName(Integer pageNo, String  bookName) throws ClassNotFoundException, SQLException{
-		if(pageNo!=null) {
+		String query = "select * from tbl_book where title like ?";
+		if(pageNo != null) {
 			setPageSize(10);
 			setPageNo(pageNo);
+			query = setLimit(query);
 		}
 		bookName = "%"+bookName+"%";
-		List<Book> retList = template.query("select * from tbl_book where title like ?", new Object[]{bookName}, this);
+		List<Book> retList = template.query(query, new Object[]{bookName}, this);
 		return retList;
 	}
 	
 	public List<Book> readAllBooks(Integer pageNo) throws ClassNotFoundException, SQLException{
-		if(pageNo!=null) {
-			setPageNo(pageNo);
+		String query = "select * from tbl_book";
+		if(pageNo != null) {
 			setPageSize(10);
+			setPageNo(pageNo);
+			query = setLimit(query);
 		}
 		//List<Book> bookRead = template.query("select * from tbl_book", null);
-		return template.query("select * from tbl_book", new Object[]{}, this);
+		return template.query(query, new Object[]{}, this);
 	}
 
 //	public Integer getBooksCount() throws ClassNotFoundException, SQLException{

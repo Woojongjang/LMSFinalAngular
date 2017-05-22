@@ -33,11 +33,13 @@ public class LibraryBranchDAO extends BaseDAO implements ResultSetExtractor<List
 	}
 	
 	public List<LibraryBranch> readAllBranches(Integer pageNo) throws ClassNotFoundException, SQLException{
-		if(pageNo!=null) {
-			setPageNo(pageNo);
+		String query = "select * from tbl_library_branch";
+		if (pageNo != null) {
 			setPageSize(10);
+			setPageNo(pageNo);
+			query = setLimit(query);
 		}
-		return template.query("select * from tbl_library_branch", new Object[]{}, this);
+		return template.query(query, new Object[]{}, this);
 	}
 	
 	public LibraryBranch readBranchByID(Integer branchID) throws ClassNotFoundException, SQLException{
@@ -60,12 +62,14 @@ public class LibraryBranchDAO extends BaseDAO implements ResultSetExtractor<List
 	}
 	
 	public List<LibraryBranch> readBranchesByName(Integer pageNo, String  branchName) throws ClassNotFoundException, SQLException{
-		if(pageNo!=null) {
-			setPageNo(pageNo);
+		String query = "select * from tbl_library_branch where branchName like ?";
+		if (pageNo != null) {
 			setPageSize(10);
+			setPageNo(pageNo);
+			query = setLimit(query);
 		}
 		branchName = "%"+branchName+"%";
-		List<LibraryBranch> retList = template.query("select * from tbl_library_branch where branchName like ?", new Object[]{branchName}, this);
+		List<LibraryBranch> retList = template.query(query, new Object[]{branchName}, this);
 		return retList;
 	}
 	

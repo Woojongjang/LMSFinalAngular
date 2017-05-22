@@ -1,19 +1,46 @@
 package com.gcit.lms.entity;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+
+//class BookKeyDeserializer extends KeyDeserializer
+//{
+//    @Override
+//    public Object deserializeKey( String key, DeserializationContext ctxt )
+//    		throws IOException, JsonProcessingException {
+////        Book newBook = new Book();
+////        newBook.setBookId(parseBookId( key ));
+////        newBook.setTitle(parseTitle( key ));
+//    	ObjectMapper mapper = new ObjectMapper();
+//    	Book newBook = mapper.readValue(key, Book.class);
+//        return newBook;
+//    }
+//}
 
 public class LibraryBranch implements Serializable{
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3445880759871935358L;
+	private static final long serialVersionUID = 5485198573104394925L;
 	private Integer branchId;
 	private String branchName;
 	private String branchAddress;
-	private HashMap<Book, Integer> booksCount;
+	
+	private List<Book> books;
+	private HashMap<Integer, Integer> booksCount;
+	
+//	@JsonDeserialize( keyUsing = BookKeyDeserializer.class )
+//	private HashMap<Book, Integer> booksKeyCount;
 	
 	/**
 	 * @return the branchId
@@ -51,18 +78,44 @@ public class LibraryBranch implements Serializable{
 	public void setBranchAddress(String branchAddress) {
 		this.branchAddress = branchAddress;
 	}
+	
+	
+	/**
+	 * @return the books
+	 */
+	public List<Book> getBooks() {
+		return books;
+	}
+	/**
+	 * @param books the books to set
+	 */
+	public void setBooks(List<Book> books) {
+		this.books = books;
+	}
 	/**
 	 * @return the booksCount
 	 */
-	public HashMap<Book, Integer> getBooksCount() {
+	public HashMap<Integer, Integer> getBooksCount() {
 		return booksCount;
 	}
 	/**
 	 * @param booksCount the booksCount to set
 	 */
-	public void setBooksCount(HashMap<Book, Integer> booksCount) {
+	public void setBooksCount(HashMap<Integer, Integer> booksCount) {
 		this.booksCount = booksCount;
 	}
+	/**
+	 * @return the booksKeyCount
+	 */
+//	public HashMap<Book, Integer> getBooksKeyCount() {
+//		return booksKeyCount;
+//	}
+//	/**
+//	 * @param booksKeyCount the booksKeyCount to set
+//	 */
+//	public void setBooksKeyCount(HashMap<Book, Integer> booksKeyCount) {
+//		this.booksKeyCount = booksKeyCount;
+//	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

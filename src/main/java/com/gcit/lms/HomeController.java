@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gcit.lms.dao.AuthorDAO;
 import com.gcit.lms.dao.BookDAO;
 import com.gcit.lms.entity.Author;
+import com.gcit.lms.entity.Book;
 import com.gcit.lms.service.AdminService;
 
 /**
@@ -140,7 +141,7 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/addAuthorServ", method = RequestMethod.POST, consumes="application/json")
-	public String addAuthorServ(@RequestBody Author  author) {
+	public String addAuthorServ(@RequestBody Author author) {
 		try {
 			adao.addAuthor(author);
 		} catch (ClassNotFoundException e) {
@@ -149,6 +150,29 @@ public class HomeController {
 			e.printStackTrace();
 		}
 		return "AUTHOR ADDED";
+	}
+	
+	@RequestMapping(value = "/addBookAuthorServ", method = RequestMethod.POST, consumes="application/json")
+	public String addBookAuthorServ(@RequestBody Book book) {
+		try {
+			List<Author> bookAuthors = book.getAuthors();
+//			bdao.addBookAuthors(book, book.getAuthors());
+			Integer bookId = book.getBookId();
+			if(bookAuthors!=null && !bookAuthors.isEmpty()) {
+//				int count = 0;
+				for(Author bAuthElem : bookAuthors) {
+//					count += 1;
+//					System.out.println(count);
+					Integer authId = bAuthElem.getAuthorId();
+					bdao.addBookAuthorInteger(bookId,authId);
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "BOOK AUTHOR ADDED";
 	}
 
 }
