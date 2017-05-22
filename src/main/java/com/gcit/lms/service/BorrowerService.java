@@ -8,7 +8,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +19,10 @@ import com.gcit.lms.dao.BookDAO;
 import com.gcit.lms.dao.BookLoanDAO;
 import com.gcit.lms.dao.BorrowerDAO;
 import com.gcit.lms.dao.LibraryBranchDAO;
+import com.gcit.lms.entity.Book;
 import com.gcit.lms.entity.BookLoan;
 import com.gcit.lms.entity.Borrower;
+import com.gcit.lms.entity.LibraryBranch;
 
 @RestController
 public class BorrowerService {
@@ -33,6 +37,20 @@ public class BorrowerService {
 	
 	@Autowired
 	LibraryBranchDAO lbdao;
+	
+	
+	@RequestMapping(value = "/initBookLoan", method = RequestMethod.GET, produces="application/json")
+	public BookLoan initBookLoan() {
+		BookLoan loan = new BookLoan();
+		Book book = new Book();
+		Borrower borrower = new Borrower();
+		LibraryBranch branch = new LibraryBranch();
+		loan.setBook(book);
+		loan.setBorrower(borrower);
+		loan.setBranch(branch);
+		return loan;
+	}
+	
 	
 	public boolean checkBorrowerId(Integer borrowerID) {
 		try {
@@ -83,6 +101,29 @@ public class BorrowerService {
 		return null;
 	}
 	
+	@Transactional
+	@RequestMapping(value = "/Borrower/{borrowerId}/BookLoans", method = RequestMethod.PUT, consumes="application/json", produces="text/plain")
+	public String returnBookLoan(@PathVariable Integer borrowerId, @RequestBody BookLoan loan) {
+		try {
+			loan.getBorrower().setBorrowerId(borrowerId);
+			bldao.returnBookLoan(loan);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return "BOOK RETURNED";
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/Borrower/{borrowerId}/BookLoans", method = RequestMethod.POST, consumes="application/json", produces="text/plain")
+	public String addBookLoan(@PathVariable Integer borrowerId, @RequestBody BookLoan loan) {
+		try {
+			loan.getBorrower().setBorrowerId(borrowerId);
+			bldao.addBookLoanAutoDue(loan);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return "BOOK BORROWED";
+	}
 	
 	public void returnBookLoan(BookLoan loan) {
 		try {

@@ -1,0 +1,13 @@
+<div ng-controller="borrowerController" class='container'>
+	<div class='page-header'>
+		<h1>Choose a Library, User {{user.borrowerName}}</h1>
+	</div>
+	<div class="col-sm-4">
+		<label for="selectlib">Select A Library to Borrow From:</label> 
+		<select class="form-control" ng-model="branch" id="selectlib" size="5"
+			ng-options="l as (l.branchName +', '+ l.branchAddress) for l in libraries"></select> <br />
+		<!-- <tt>Branch Selected = {{branch}}</tt><br/> -->
+		<button type="button" class="btn btn-primary" ng-click="goToBranch(branch.branchId)">Go
+			To Branch</button>
+	</div>
+</div>

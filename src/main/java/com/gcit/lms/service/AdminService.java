@@ -163,8 +163,6 @@ public class AdminService {
 	
 	@RequestMapping(value = "/initBook", method = RequestMethod.GET, produces="application/json")
 	public Book initBook() {
-		Book book = new Book();
-		System.out.println("Object book toString "+book.toString());
 		return new Book();
 	}
 	

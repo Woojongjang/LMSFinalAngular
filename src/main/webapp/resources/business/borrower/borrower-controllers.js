@@ -19,8 +19,20 @@ lmsApp.controller("borrowerController",
 //			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 //			document.getElementById("viewHeader").innerHTML = "Book Loans For "+$scope.user.borrowerName;
 		});
-		bookService.getAllBooksService().then(function(backendBooksList){
-			$scope.allBooks = backendBooksList;
+	}else if($location.$$path === "/choosebranch") {
+		$scope.user = borrowerService.getData("cardNoSt");
+		libraryService.getAllLibrariesService().then(function(backendBranchList){
+			$scope.libraries = backendBranchList;
+			$scope.branch = $scope.libraries[0];
+		});
+	}else if($location.$$path === "/borrowlibrarybooks"){
+		$scope.user = borrowerService.getData("cardNoSt");
+		$scope.gotId = libraryService.getData("branchSt");
+		libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
+			$scope.branch = branchBookList;
+//			$scope.pagination = Pagination.getNew(10);
+//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			document.getElementById("viewHeader").innerHTML = "Books In "+$scope.branch.branchName+" Library For User "+$scope.user.borrowerName;
 		});
 	}
 	
@@ -43,74 +55,62 @@ lmsApp.controller("borrowerController",
 	}
 	
 	$scope.checkIn = function(loan){
-		alert(JSON.stringify(loan));
-		borrowerService.turnInBookService($scope.user.borrowerId).then(function(bookLoansList){
-			$scope.loans = bookLoansList;
+//		alert(JSON.stringify(loan));
+		var current = new Date().toISOString().slice(0, 19).replace('T', ' ');
+		alert(current);
+		loan.dateIn = current;
+//		alert(JSON.stringify(loan));
+//		alert($scope.user.borrowerId);
+		borrowerService.turnInBookService($scope.user.borrowerId, loan).then(function(response){
+			alert(response);
+//			$scope.loans = bookLoansList;
 		});
+	}
+	
+	$scope.goToBranch = function(branchId) {
+		$location.path('/borrowlibrarybooks');
+		libraryService.setData(branchId, "branchSt");
 	}
 	
 	$scope.sort = function(){
 		$scope.branch.books = $filter('orderBy')($scope.branch.books, 'title');
 	}
 	
-	$scope.closeModal = function(){
-		$scope.editModal = false;
-		$scope.setCount = undefined;
-	}
-	
-	$scope.addBook = function() {
-		bookService.initBookService().then(function(data){
-			$scope.book = data;
-			$scope.add = true;
-			document.getElementById("modalTitle").innerHTML = "Adding New Book Entry for Branch";
-			document.getElementById("modalSave").innerHTML = "Add";
-			document.getElementById("modalSave").setAttribute("class", "btn btn-success");
-			$scope.book = $scope.allBooks[0];
-			$scope.editModal = true;
+	$scope.borrow = function(book) {
+		borrowerService.initBookLoanService().then(function(data){
+			$scope.loan = data;
+//			alert(JSON.stringify($scope.loan));
+			var current = new Date().toISOString().slice(0, 19).replace('T', ' ');
+//			alert($scope.gotId);
+//			alert(book.bookId);
+//			alert($scope.user.borrowerId);
+			$scope.loan.branch.branchId = $scope.gotId;
+			$scope.loan.book.bookId = book.bookId;
+			$scope.loan.borrower.borrowerId = $scope.user.borrowerId;
+			$scope.loan.dateChecked = current.toString();
+//			alert(JSON.stringify($scope.loan));
+			borrowerService.borrowBookService($scope.user.borrowerId, $scope.loan).then(function(response){
+				alert(response);
+				libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
+					$scope.branch = branchBookList;
+				});
+			});
 		});
-	}
-	
-	$scope.showEditModal = function(book){
-		$scope.book = book;
-		$scope.add = false;
-		document.getElementById("modalTitle").innerHTML = "Adding Book Count Entry for Branch";
-		document.getElementById("modalSave").innerHTML = "Update";
-		document.getElementById("modalSave").setAttribute("class", "btn btn-primary");
-		$scope.editModal = true;
-	}
-	
-	$scope.updateDetails = function(){
-		if($scope.add) {
-			if($scope.setCount === "" || $scope.setCount === undefined || $scope.setCount === null){
-				alert("book count is empty");
-				$scope.editModal = true;
-			}
-			else {
-//				alert(JSON.stringify($scope.book));
-				libraryService.setBookCountService($scope.gotId, $scope.book.bookId, $scope.setCount).then(function(data){
-					alert(data);
-					libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
-						$scope.branch = branchBookList;
-					});
-				});
-				$scope.editModal = false;
-			}
-		}
-		else {
-			if($scope.setCount === "" || $scope.setCount === undefined || $scope.setCount === null){
-				alert("book count is empty");
-				$scope.editModal = true;
-			}
-			else {
-				libraryService.setBookCountService($scope.gotId, $scope.book.bookId, $scope.setCount).then(function(data){
-					alert(data);
-					libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
-						$scope.branch = branchBookList;
-					});
-				});
-				$scope.editModal = false;
-			}
-		}
+//		alert(JSON.stringify($scope.loan));
+//		alert($scope.gotId);
+//		alert(book.bookId);
+//		alert($scope.user.borrowerId);
+//		alert(current);
+//		borrowerService.borrowBookService($scope.user.borrowerId, loan).then(function(response){
+//			alert(response);
+////			$scope.loans = bookLoansList;
+//		});
+//		libraryService.setBookCountService($scope.gotId, book.bookId, count).then(function(data){
+//			alert(data);
+//			libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
+//				$scope.branch = branchBookList;
+//			});
+//		});
 	}
 	
 	$scope.dataSearch = function(){
@@ -121,12 +121,4 @@ lmsApp.controller("borrowerController",
 		});
 	}
 	
-	$scope.dataDelete = function(bookId) {
-		libraryService.deleteCountService($scope.gotId, bookId).then(function(data){
-			alert(data);
-			libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
-				$scope.branch = branchBookList;
-			});
-		});
-	}
 })

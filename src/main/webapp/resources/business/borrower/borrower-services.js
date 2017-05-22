@@ -11,6 +11,18 @@ lmsApp.factory("borrowerService", function($http, borrowerConstants){
 		setData: setData,
 		getData: getData,
 		
+		initBookLoanService: function(){
+			var initData = {};
+			return $http({
+				url: borrowerConstants.INIT_BOOKLOAN_URL,
+				method: "GET"
+			}).success(function(data){
+				initData = data;
+			}).then(function(){
+				return initData;
+			})
+		},
+		
 		authenticateUserService: function(cardId) {
 			var getBranchData = {};
 			return $http({
@@ -56,25 +68,25 @@ lmsApp.factory("borrowerService", function($http, borrowerConstants){
 			})
 		},
 		
-		getSearchAuthorService: function(search) {
-			var getAuthorSearch = {};
+		turnInBookService: function(cardId, loan) {
+			var respString = {};
 			return $http({
-				url: authorConstants.GET_AUTHORS,
-				method: "GET",
-			    params: {searchString: search}
+				url: borrowerConstants.BORROWER_URL+cardId+"/BookLoans",
+				method: "PUT",
+				data: loan
 			}).success(function(data){
-				getAuthorSearch = data;
+				respString = data;
 			}).then(function(){
-				return getAuthorSearch;
+				return respString;
 			})
 		},
 		
-		setBookCountService: function(branchId, bookId, count){
+		borrowBookService: function(cardId, loan){
 			var retString = "";
 			return $http({
-				url: libraryConstants.LIBRARIES_URL+branchId+'/'+bookId+'/'+count,
-				method: "PUT",
-				data: {}
+				url: borrowerConstants.BORROWER_URL+cardId+"/BookLoans",
+				method: "POST",
+				data: loan
 			}).success(function(data){
 				retString = data;
 			}).then(function(){

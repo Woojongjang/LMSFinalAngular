@@ -23,5 +23,9 @@ lmsApp.config(["$routeProvider", function($routeProvider){
 		templateUrl: "borrower.html"
 	}).when("/viewbooksloans",{
 		templateUrl: "viewbooksloans.html"
+	}).when("/choosebranch",{
+		templateUrl: "choosebranch.html"
+	}).when("/borrowlibrarybooks",{
+		templateUrl: "borrowlibrarybooks.html"
 	})
 }])

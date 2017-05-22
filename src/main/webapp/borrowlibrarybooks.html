@@ -1,0 +1,43 @@
+<div ng-controller="borrowerController" class="container">
+	<div class="page-header">
+		<h1 id="viewHeader">List of Books in LMS Branch</h1>
+	</div>
+	
+	<div class="input-group">
+		<input type="text" class="form-control" ng-model="searchString"
+			placeholder="Search for..." ng-change="dataSearch()">
+	</div>
+	<div class="col-md-10">
+		<ul class="pagination">
+			<li><a href="" ng-click="pagination.prevPage()">&laquo;</a></li>
+			<li ng-repeat="n in [] | range: pagination.numPages"
+				ng-class="{active: n == pagination.page}"><a href=""
+				ng-click="pagination.toPageId(n)">{{n + 1}}</a></li>
+			<li><a href="" ng-click="pagination.nextPage()">&raquo;</a></li>
+		</ul>
+	</div>
+	<label>Any: <input ng-model="search.$" ng-change="filter()"></label> <br>
+	<label>Name only <input ng-model="search.title" ng-change="filter()">	</label><br>
+	<table class="table" id="bookssTable">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th><a ng-click="sort()">Book Title</a></th>
+				<th>Numbers</th>
+				<th>Borrow</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr
+				ng-repeat="b in branch.books | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
+				<td>{{$index+1}}</td>
+				<td>{{b.title}}</td>
+				<td>{{branch.booksCount[b.bookId]}}</td>
+				<td ng-show="branch.booksCount[b.bookId] > 0"><button type="button" class="btn btn-primary"
+						ng-click="borrow(b)">Borrow</button></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+

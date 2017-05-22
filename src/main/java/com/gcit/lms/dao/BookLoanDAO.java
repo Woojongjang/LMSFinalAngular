@@ -25,7 +25,7 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 	public void addBookLoan(BookLoan book) throws ClassNotFoundException, SQLException{
 		template.update("insert into tbl_book_loans (bookId,branchId,cardNo,dateOut,dueDate,dateIn) values (?,?,?,?,?,?)",
 				new Object[] {book.getBook().getBookId(),book.getBranch().getBranchId(),
-						book.getBorrower().getBorrowerId(),book.getDateChecked(),book.getDateDue(),book.getDateIn()});
+						book.getBorrower().getBorrowerId(),book.getDateChecked(),book.getDateDue(),null});
 	}
 	
 	public void addBookLoanAutoDue(BookLoan loan) throws ClassNotFoundException, SQLException{
@@ -72,6 +72,7 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 		String dateIn = book.getDateIn();
 		template.update("update tbl_book_loans set dateIn = ? where bookId = ? and branchId = ? and cardNo = ? and dateOut = ?",
 				new Object[]{dateIn, bookId, branchId, borrowId, dateChecked});
+		template.update("{call return_book_add_copy(?, ?)}", bookId, branchId);
 	}
 	
 	public void deleteBookLoan(BookLoan book) throws ClassNotFoundException, SQLException{
