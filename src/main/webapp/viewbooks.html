@@ -65,14 +65,17 @@
 							<span class="error" ng-show="myForm.myInput.$error.required" style="color:red">
 								Book Name Required!</span>
 						</div>
+						
 						<label for="selauth">Select Author(s) of the Book (hold ctrl to select more than one):</label>
 						<select multiple class="form-control" ng-model="book.authors" id="selauth" size="5" 
 							ng-options="a as a.authorName for a in authors track by a.authorId"></select>
 						<!-- <tt>{{book.title}}'s authors Selected = {{book.authors}}</tt><br/> -->
+						
 						<label for="selpub">Select Publisher of the Book:</label>
 						<select class="form-control" ng-model="book.publisher" id="selpub" size="5" 
 							ng-options="p as p.publisherName for p in publishers track by p.publisherId"></select>
 						<!-- <tt>{{book.title}}'s publisher Selected = {{book.publisher}}</tt><br/> -->
+						
 						<label for="selgenr">Select Genre(s) of the Book (hold ctrl to select more than one):</label>
 						<select multiple class="form-control" ng-model="book.genres" id="selgenr" size="5" 
 						ng-options="g as g.genreName for g in genres track by g.genreId"></select>

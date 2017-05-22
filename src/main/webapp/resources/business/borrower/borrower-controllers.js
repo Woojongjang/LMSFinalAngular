@@ -34,6 +34,12 @@ lmsApp.controller("borrowerController",
 //			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 			document.getElementById("viewHeader").innerHTML = "Books In "+$scope.branch.branchName+" Library For User "+$scope.user.borrowerName;
 		});
+	}else if($location.$$path === "/adminbookloans"){
+		borrowerService.getAllLoansService().then(function(allLoansList){
+			$scope.loans = allLoansList;
+//			$scope.pagination = Pagination.getNew(10);
+//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+		});
 	}
 	
 	$scope.goToLogIn = function(cardId) {
@@ -113,11 +119,58 @@ lmsApp.controller("borrowerController",
 //		});
 	}
 	
+	$scope.updateDueDate = function(loan) {
+//		alert(JSON.stringify(loan));
+		$scope.loan = loan;
+//		$scope.add = false;
+		$scope.editModal = true;
+	}
+	
+	$scope.closeModal = function(){
+		$scope.editModal = false;
+	}
+	
+	$scope.updateDetails = function(){
+		if($scope.loan.dateIn === "" || $scope.loan.dateIn === undefined || $scope.loan.dateIn === null
+			|| $scope.loan.dateDue === "" || $scope.loan.dateDue === undefined || $scope.loan.dateDue === null){
+			alert("Date Field has Wrong Input");
+			$scope.editModal = true;
+		}
+		else {
+			alert(JSON.stringify($scope.loan));
+			borrowerService.updateLoansService($scope.loan).then(function(response){
+				alert(response);
+				borrowerService.getAllLoansService().then(function(allLoansList){
+					$scope.loans = allLoansList;
+//					$scope.pagination = Pagination.getNew(10);
+//					$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+				});
+			});
+			$scope.editModal = false;
+		}
+	}
+	
 	$scope.dataSearch = function(){
 		bookService.searchService($scope.searchString).then(function(data){
 			$scope.books = data;
 			$scope.pagination = Pagination.getNew(10);
 			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+		});
+	}
+	
+	$scope.dataDelete = function(loan) {
+		var dateOutStr = encodeURI(loan.dateChecked.toString());
+//		alert(loan.book.bookId);
+//		alert(loan.branch.branchId);
+//		alert(loan.borrower.borrowerId);
+//		alert(dateOutStr);
+		borrowerService.deleteBookService(loan.book.bookId, loan.branch.branchId, loan.borrower.borrowerId, dateOutStr).then(function(data){
+			alert(data);
+			borrowerService.getAllLoansService().then(function(allLoansList){
+				$scope.loans = allLoansList;
+//				$scope.pagination = Pagination.getNew(10);
+//				$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			});
 		});
 	}
 	

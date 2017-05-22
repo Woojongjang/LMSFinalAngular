@@ -59,7 +59,7 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 		
 		String dateDue = book.getDateDue();
 		String dateIn = book.getDateIn();
-		template.update("update tbl_book_loans set dueDate = ?, set dateIn = ? where bookId = ? and branchId = ? and cardNo = ? and dateOut = ?",
+		template.update("update tbl_book_loans set dueDate = ?, dateIn = ? where bookId = ? and branchId = ? and cardNo = ? and dateOut = ?",
 				new Object[]{dateDue, dateIn, bookId, branchId, borrowId, dateChecked});
 	}
 	
@@ -79,6 +79,11 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 		template.update("delete from tbl_book_loans where bookId = ? and branchId = ? and cardNo = ? and dateOut = ?",
 				new Object[] {book.getBook().getBookId(), book.getBranch().getBranchId(),
 						book.getBorrower().getBorrowerId(), book.getDateChecked()});
+	}
+	
+	public void deleteBookLoanByID(Integer bookId, Integer branchId, Integer borrowerId, String dateOut) throws ClassNotFoundException, SQLException{
+		template.update("delete from tbl_book_loans where bookId = ? and branchId = ? and cardNo = ? and dateOut = ?",
+				new Object[] {bookId, branchId, borrowerId, dateOut});
 	}
 	
 	public List<BookLoan> readBookLoanByID(Integer pageNo, Integer borrowerId) throws ClassNotFoundException, SQLException{
@@ -126,8 +131,10 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 			String dateChecked = rs.getString("dateOut");
 			Book book = new Book();
 			LibraryBranch branch = new LibraryBranch();
+			Borrower borrower = new Borrower();
 			book.setBookId(rs.getInt("bookId"));
 			branch.setBranchId(rs.getInt("branchId"));
+			borrower.setBorrowerId(rs.getInt("cardNo"));
 			String dateDue = rs.getString("dueDate");
 			String dateIn = rs.getString("dateIn");
 			BookLoan bookLoan = new BookLoan();
@@ -143,6 +150,9 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 			}
 			if(branch!=null) {
 				bookLoan.setBranch(branch);
+			}
+			if(borrower!=null) {
+				bookLoan.setBorrower(borrower);
 			}
 			books.add(bookLoan);
 		}

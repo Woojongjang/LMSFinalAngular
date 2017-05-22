@@ -69,7 +69,7 @@ lmsApp.factory("borrowerService", function($http, borrowerConstants){
 		},
 		
 		turnInBookService: function(cardId, loan) {
-			var respString = {};
+			var respString = "";
 			return $http({
 				url: borrowerConstants.BORROWER_URL+cardId+"/BookLoans",
 				method: "PUT",
@@ -94,15 +94,48 @@ lmsApp.factory("borrowerService", function($http, borrowerConstants){
 			})
 		},
 		
-		deleteCountService: function(branchId, bookId) {
+		deleteBookService: function(book, branch, card, date) {
+//			alert(book);
+//			alert(branch);
+//			alert(card);
+//			alert(date);
 			var resturnStr = "";
 			return $http({
-				url: libraryConstants.LIBRARIES_URL+branchId+'/'+bookId,
-				method: "DELETE"
+				url: borrowerConstants.BOOK_LOAN_URL,
+				method: "DELETE",
+				params: {bookId: book,
+						branchId: branch,
+						cardNo: card, 
+						dateOut: date}
 			}).success(function(data){
 				resturnStr = data;
 			}).then(function(){
 				return resturnStr;
+			})
+		},
+		
+		getAllLoansService: function() {
+			var allLoans = {};
+			return $http({
+				url: borrowerConstants.BOOK_LOAN_URL,
+				method: "GET"
+			}).success(function(data){
+				allLoans = data;
+			}).then(function(){
+				return allLoans;
+			})
+		},
+		
+		updateLoansService: function(loan) {
+			var retUpdate = "";
+			return $http({
+				url: borrowerConstants.BOOK_LOAN_URL,
+				method: "PUT",
+				data: loan
+			}).success(function(data){
+				retUpdate = data;
+			}).then(function(){
+				return retUpdate;
 			})
 		}
 	}

@@ -1,5 +1,7 @@
 package com.gcit.lms.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gcit.lms.dao.AuthorDAO;
 import com.gcit.lms.dao.BookBranchCountDAO;
 import com.gcit.lms.dao.BookDAO;
+import com.gcit.lms.dao.BookLoanDAO;
 import com.gcit.lms.dao.BorrowerDAO;
 import com.gcit.lms.dao.GenreDAO;
 import com.gcit.lms.dao.LibraryBranchDAO;
 import com.gcit.lms.dao.PublisherDAO;
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.BookLoan;
 import com.gcit.lms.entity.Borrower;
 import com.gcit.lms.entity.Genre;
 import com.gcit.lms.entity.LibraryBranch;
@@ -51,6 +55,9 @@ public class AdminService {
 	
 	@Autowired
 	BookBranchCountDAO bbcdao;
+	
+	@Autowired
+	BookLoanDAO bldao;
 	
 	//-------------AUTHOR SERVICES-------------//
 	
@@ -450,7 +457,50 @@ public class AdminService {
 	}
 	
 	
-	//-------------OTHER SERVICES-------------//
+	//-------------BOOKLOAN SERVICES-------------//
+	
+	@RequestMapping(value = "/Borrower/BookLoans", method = RequestMethod.GET, produces = "application/json")
+	public List<BookLoan> getAllBookLoans() {
+		List<BookLoan> bookLoans = new ArrayList<BookLoan>();
+		try {
+			bookLoans = bldao.readAllBookLoans(null);
+			for(BookLoan loans : bookLoans) {
+				loans.setBook(bdao.readBookByID(loans.getBook().getBookId()));
+				loans.setBorrower(brdao.readBorrowerByID(loans.getBorrower().getBorrowerId()));
+				loans.setBranch(lbdao.readBranchByID(loans.getBranch().getBranchId()));
+			}
+			return bookLoans;
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Transactional
+	@RequestMapping(value = "/Borrower/BookLoans", method = RequestMethod.PUT, consumes="application/json", produces="text/plain")
+	public String updateBookLoan(@RequestBody BookLoan loan) {
+		try {
+			bldao.updateBookLoan(loan);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return "BOOK LOAN UPDATED";
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/Borrower/BookLoans", method = RequestMethod.DELETE, produces="text/plain")
+	public String deleteBookLoan(@RequestParam(value = "bookId", required = true) Integer bookId,
+			@RequestParam(value = "branchId", required = true) Integer branchId,
+			@RequestParam(value = "cardNo", required = true) Integer cardNo,
+			@RequestParam(value = "dateOut", required = true) String dateOut) {
+		try {
+			String decodedDate = URLDecoder.decode(dateOut, "UTF-8");
+			bldao.deleteBookLoanByID(bookId, branchId, cardNo, decodedDate);
+		} catch (ClassNotFoundException | SQLException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "BOOK LOAN DELETED";
+	}
 	
 	public Author getAuthorByPk(Integer authorId) {
 		try {
