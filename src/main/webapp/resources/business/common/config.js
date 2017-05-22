@@ -17,7 +17,11 @@ lmsApp.config(["$routeProvider", function($routeProvider){
 		templateUrl: "viewbooks.html"
 	}).when("/adminbookloan",{
 		templateUrl: "adminbookloan.html"
-	}).when("/viewbookloans",{
-		templateUrl: "viewbookloans.html"
+	}).when("/borrowerlogin",{
+		templateUrl: "borrowerlogin.html"
+	}).when("/borrower",{
+		templateUrl: "borrower.html"
+	}).when("/viewbooksloans",{
+		templateUrl: "viewbooksloans.html"
 	})
 }])

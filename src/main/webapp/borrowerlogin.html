@@ -1,0 +1,25 @@
+<div ng-controller="borrowerController" class="container">
+<div class='jumbotron'>
+	<h1>Borrower Services</h1>
+</div>
+<div>
+	<div class='page-header'>
+		<h1>Borrower Log-In</h1>
+	</div>
+	<div class="col-sm-4">
+		<div class="input-group" ng-form name="myForm">
+			<span class="input-group-addon" id="basic-addon1">Card Number:</span>
+			<input type="text" ng-model="cardId" class="form-control" required
+				name="cardLogIn" id="cardLogIn" placeholder="Type your card number here..."
+				aria-describedby="basic-addon1" pattern="[0-9]+">
+		</div>
+		<div role="alert">
+				<span class="error" ng-show="myForm.cardLogIn.$error.required"
+					style="color: red"> Card Number Input Required!</span>
+			</div>
+		<br />
+		<button type="button" class="btn btn-primary"
+			ng-click="goToLogIn(cardId)">Log In</button>
+	</div>
+</div>
+</div>

@@ -1,37 +1,58 @@
-lmsApp.factory("libraryService", function($http, libraryConstants){
-	var branchStore = {};
+lmsApp.factory("borrowerService", function($http, borrowerConstants){
+	var userIdStore = {};
 	
 	var setData = function(data, key){
-		branchStore[key] = data;
+		userIdStore[key] = data;
 	};
 	var getData = function(key){
-		return branchStore[key];
+		return userIdStore[key];
 	};
 	return{
 		setData: setData,
 		getData: getData,
 		
-		getAllLibrariesService: function(){
+		authenticateUserService: function(cardId) {
 			var getBranchData = {};
 			return $http({
-				url: libraryConstants.LIBRARIES_URL,
+				url: borrowerConstants.BORROWER_URL+cardId,
+				method: "GET"
+			}).then(function successCallback(response) {
+			    // this callback will be called asynchronously
+			    // when the response is available
+				//alert("success");
+				//alert(JSON.stringify(response.data));
+				//borrowerService.setData(response.data.borrowerId, "userIdSt");
+				return response.data;
+			  }, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+//				  alert("error");
+//				alert(JSON.stringify(response.data));
+				  return response.data;
+			  });
+		},
+		
+		getUserService: function(cardId){
+			var getUserData = {};
+			return $http({
+				url: borrowerConstants.BORROWER_URL+cardId,
 				method: "GET"
 			}).success(function(data){
-				getBranchData = data;
+				getUserData = data;
 			}).then(function(){
-				return getBranchData;
+				return getUserData;
 			})
 		},
 		
-		getBranchBooksService: function(branchId){
-			var getBranchBookData = {};
+		getUserLoansService: function(cardId){
+			var getLoansData = {};
 			return $http({
-				url: libraryConstants.LIBRARIES_URL+branchId+"/Books",
+				url: borrowerConstants.BORROWER_URL+cardId+"/BookLoans",
 				method: "GET"
 			}).success(function(data){
-				getBranchBookData = data;
+				getLoansData = data;
 			}).then(function(){
-				return getBranchBookData;
+				return getLoansData;
 			})
 		},
 		

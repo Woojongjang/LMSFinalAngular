@@ -54,16 +54,20 @@
 						<h4 class="modal-title" id="modalTitle">Adding Book Entry for Branch</h4>
 					</div>
 					<div class="modal-body" ng-form name="myForm">
-						Book Name: <p class="text-info">{{book.title}}</p>
+						Book Name: <p class="text-info" ng-show="add === false">{{book.title}}</p>
 						Branch Name: <p class="text-info">{{branch.branchName}}</p>
-						<label for="newCount">Select Number of Books to Add:</label>
-						<input type="number" class="form-control" name="newCount" id="newCount" ng-model="addCount" required
-							placeholder="Input How Many Books to Add..." min="-{{branch.booksCount[book.bookId]}}">
+						<label for="selbook" ng-show="add === true">Select Book to Add:</label>
+						<select class="form-control" ng-model="book" id="selbook" size="5" ng-show="add === true"
+							ng-options="b as b.title for b in allBooks track by b.bookId"></select></br>
+						<!-- <tt>Book Selected = {{book}}</tt><br/> -->
+						<tt>Count of the Book = {{branch.booksCount[book.bookId]}}</tt><br/>
+						<label for="newCount">Select Number of Books to Set:</label>
+						<input type="number" class="form-control" name="newCount" id="newCount" ng-model="setCount" required
+							placeholder="Input How Many Books There Are..." min="0">
 						<div role="alert">
 							<span class="error" ng-show="myForm.newCount.$error.required"
 								style="color: red"> Number of Books to Add Required!</span>
 						</div>
-						<tt>Count of the Book = {{branch.booksCount[book.bookId]}}</tt><br/>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal"

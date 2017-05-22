@@ -150,6 +150,11 @@ public class BookDAO extends BaseDAO implements ResultSetExtractor<List<Book>>{
 		return books;
 	}
 	
+	public List<Book> readBookByUserId(Integer borrowerID) throws ClassNotFoundException, SQLException{
+		List<Book> books = template.query("select * from tbl_book where bookId in (select bookId from tbl_book_loans where cardNo = ?)", new Object[]{borrowerID}, this);
+		return books;
+	}
+	
 	public List<Book> readBooksByName(Integer pageNo, String  bookName) throws ClassNotFoundException, SQLException{
 		String query = "select * from tbl_book where title like ?";
 		if(pageNo != null) {

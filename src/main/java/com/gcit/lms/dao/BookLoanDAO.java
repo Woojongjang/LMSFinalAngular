@@ -123,7 +123,10 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 		List<BookLoan> books = new ArrayList<>();
 		while(rs.next()){
 			String dateChecked = rs.getString("dateOut");
-			
+			Book book = new Book();
+			LibraryBranch branch = new LibraryBranch();
+			book.setBookId(rs.getInt("bookId"));
+			branch.setBranchId(rs.getInt("branchId"));
 			String dateDue = rs.getString("dueDate");
 			String dateIn = rs.getString("dateIn");
 			BookLoan bookLoan = new BookLoan();
@@ -133,6 +136,12 @@ public class BookLoanDAO extends BaseDAO implements ResultSetExtractor<List<Book
 			}
 			if(dateIn!=null) {
 				bookLoan.setDateIn(dateIn);
+			}
+			if(book != null) {
+				bookLoan.setBook(book);
+			}
+			if(branch!=null) {
+				bookLoan.setBranch(branch);
 			}
 			books.add(bookLoan);
 		}

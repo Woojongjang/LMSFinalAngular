@@ -433,19 +433,6 @@ public class AdminService {
 		return branches;
 	}
 	
-	@RequestMapping(value = "/Libraries/{branchId}/Books", method = RequestMethod.GET, produces = "application/json")
-	public LibraryBranch getAllBranchBook(@PathVariable Integer branchId) {
-		LibraryBranch branch = new LibraryBranch();
-		try {
-			branch = lbdao.readBranchByID(branchId);
-			branch.setBooks(bdao.readBookByBranchId(branchId));
-			branch.setBooksCount(bbcdao.readBookCountByBranch(branchId));
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-		return branch;
-	}
-	
 	@Transactional
 	public void editBranch(LibraryBranch branch) {
 		try {

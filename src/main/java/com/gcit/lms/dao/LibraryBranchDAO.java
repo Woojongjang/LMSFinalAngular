@@ -9,8 +9,11 @@ import java.util.List;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.Genre;
 import com.gcit.lms.entity.LibraryBranch;
+import com.gcit.lms.entity.Publisher;
 /**
  * This is a DAO
  * @branch woojong
@@ -91,14 +94,28 @@ public class LibraryBranchDAO extends BaseDAO implements ResultSetExtractor<List
 //		return books;
 //	}
 
-	public void updateBranchBooks(Integer bookId, Integer branchId, Integer count) throws ClassNotFoundException, SQLException{
+	public void updateBranchBooks(Integer branchId, Integer bookId, Integer count) throws ClassNotFoundException, SQLException{
 		template.update("update tbl_book_copies set noOfCopies = ? where bookId = ? and branchId = ?",
 				new Object[]{count, bookId, branchId});
 	}
 	
-	public void addBranchBooks(Integer bookId, Integer branchId, Integer count) throws ClassNotFoundException, SQLException{
+	public void updateOrCreateCount(Integer branchId, Integer bookId, Integer count) throws ClassNotFoundException, SQLException{
+		List<LibraryBranch> counts = template.query("select * from tbl_library_branch where branchId in (select branchId from tbl_book_copies where branchId = ? and bookId = ?)",
+				new Object[] { branchId, bookId }, this);
+		if (counts != null && counts.size() > 0) {
+			updateBranchBooks(branchId, bookId, count);
+		} else {
+			addBranchBooks(branchId, bookId, count);
+		}
+	}
+	
+	public void addBranchBooks(Integer branchId, Integer bookId, Integer count) throws ClassNotFoundException, SQLException{
 		template.update("insert into tbl_book_copies (bookId, branchId, noOfCopies) values (?,?,?)",
 				new Object[]{bookId, branchId, count});
+	}
+	
+	public void deleteBranchBooks(Integer branchId, Integer bookId) throws ClassNotFoundException, SQLException{
+		template.update("delete from tbl_book_copies where branchId = ? and bookId = ?", new Object[] {branchId, bookId});
 	}
 	
 	@Override

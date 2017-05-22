@@ -43,7 +43,9 @@ public class BorrowerDAO extends BaseDAO implements ResultSetExtractor<List<Borr
 		if(borrowers!=null && !borrowers.isEmpty()){
 			return borrowers.get(0);
 		}
-		return null;
+		else {
+			throw new SQLException("User Was Not Found In The DataBase");
+		}
 	}
 	
 	public List<Borrower> readBorrowersByName(String name) throws ClassNotFoundException, SQLException{

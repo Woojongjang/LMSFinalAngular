@@ -6,12 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.gcit.lms.dao.BookBranchCountDAO;
 import com.gcit.lms.dao.BookDAO;
 import com.gcit.lms.dao.LibraryBranchDAO;
 import com.gcit.lms.entity.Book;
 import com.gcit.lms.entity.LibraryBranch;
 
+@RestController
 public class LibrarianService {
 	
 	@Autowired
@@ -20,13 +27,42 @@ public class LibrarianService {
 	@Autowired
 	BookDAO bdao;
 	
-	public LibraryBranch getBranchById(Integer branchId) {
+	@Autowired
+	BookBranchCountDAO bbcdao;
+	
+	@RequestMapping(value = "/Libraries/{branchId}/Books", method = RequestMethod.GET, produces = "application/json")
+	public LibraryBranch getAllBranchBook(@PathVariable Integer branchId) {
+		LibraryBranch branch = new LibraryBranch();
 		try {
-			return lbdao.readBranchByID(branchId);
+			branch = lbdao.readBranchByID(branchId);
+			branch.setBooks(bdao.readBookByBranchId(branchId));
+			branch.setBooksCount(bbcdao.readBookCountByBranch(branchId));
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return branch;
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/Libraries/{branchId}/{bookId}/{count}", method = RequestMethod.PUT, consumes = "application/json", produces="text/plain")
+	public String addBranchBookCount(@PathVariable Integer branchId, @PathVariable Integer bookId, @PathVariable Integer count) {
+		try {
+			lbdao.updateOrCreateCount(branchId, bookId, count);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return "BOOK COUNT UPDATED";
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/Libraries/{branchId}/{bookId}", method = RequestMethod.DELETE, produces="text/plain")
+	public String deleteBook(@PathVariable Integer branchId, @PathVariable Integer bookId) {
+		try {
+			lbdao.deleteBranchBooks(branchId, bookId);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return "BOOK DELETED";
 	}
 	
 	public Integer getBranchBookCount(LibraryBranch branch) {
@@ -39,14 +75,7 @@ public class LibrarianService {
 		return null;
 	}
 	
-	public void addBranchBookCount(Integer bookId, Integer branchId, Integer count) {
-		Connection conn = null;
-		try {
-			lbdao.updateBranchBooks(bookId,branchId,count);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	
 	
 	public List<Book> getBooksNotInBranch(Integer branchId) {
 		try {

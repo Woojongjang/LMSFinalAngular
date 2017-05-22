@@ -1,30 +1,52 @@
-lmsApp.controller("bookLoanController",
+lmsApp.controller("borrowerController",
 		function($scope, $http, $window, $location, bookService,
-		$filter, Pagination, authorService, publisherService, genreService, libraryService) {
+		$filter, Pagination, authorService, borrowerService, genreService, libraryService) {
 //	this.keys = {
 //		    "getBranch": "getBranch"
 //		}
-	if($location.$$path === "/librarian"){
-		libraryService.getAllLibrariesService().then(function(backendBranchList){
-			$scope.libraries = backendBranchList;
-			$scope.branch = $scope.libraries[0];
-		});
-	}else if($location.$$path === "/viewlibrarybooks"){
-		$scope.gotId = libraryService.getData("branchSt");
-		libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
-			$scope.branch = branchBookList;
+	if($location.$$path === "/borrower"){
+		$scope.user = borrowerService.getData("cardNoSt");
+//		alert(JSON.stringify($scope.user));
+//		alert($scope.user);
+		document.getElementById("welcomeId").innerHTML = "Welcome to GCIT Library Management System, User "+$scope.user.borrowerName;
+	}else if($location.$$path === "/viewbooksloans"){
+		$scope.user = borrowerService.getData("cardNoSt");
+//		alert(JSON.stringify($scope.user));
+//		alert($scope.user.borrowerId);
+		borrowerService.getUserLoansService($scope.user.borrowerId).then(function(bookLoansList){
+			$scope.loans = bookLoansList;
 //			$scope.pagination = Pagination.getNew(10);
 //			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
-			document.getElementById("viewHeader").innerHTML = "Books In "+$scope.branch.branchName+" Library";
+//			document.getElementById("viewHeader").innerHTML = "Book Loans For "+$scope.user.borrowerName;
 		});
 		bookService.getAllBooksService().then(function(backendBooksList){
 			$scope.allBooks = backendBooksList;
 		});
 	}
 	
-	$scope.goToBranch = function(branchId) {
-		$location.path('/viewlibrarybooks');
-		libraryService.setData(branchId, "branchSt");
+	$scope.goToLogIn = function(cardId) {
+		if($scope.cardId === "" || $scope.cardId === undefined || $scope.cardId === null){
+			alert("User Card Number Is Empty");
+		}
+		else{
+			borrowerService.authenticateUserService(cardId).then(function(response) {
+				if(response.error === "" || response.error === undefined || response.error === null) {
+//					alert(JSON.stringify(response));
+					$location.path('/borrower');
+					borrowerService.setData(response, "cardNoSt");
+				}
+				else {
+					alert("No User With That Card Number");
+				}
+			});
+		}
+	}
+	
+	$scope.checkIn = function(loan){
+		alert(JSON.stringify(loan));
+		borrowerService.turnInBookService($scope.user.borrowerId).then(function(bookLoansList){
+			$scope.loans = bookLoansList;
+		});
 	}
 	
 	$scope.sort = function(){
