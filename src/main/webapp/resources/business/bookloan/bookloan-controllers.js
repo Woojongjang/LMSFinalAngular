@@ -69,6 +69,8 @@ lmsApp.controller("bookLoanController",
 					alert(data);
 					libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 						$scope.branch = branchBookList;
+//						$scope.pagination = Pagination.getNew(10);
+//						$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -84,6 +86,8 @@ lmsApp.controller("bookLoanController",
 					alert(data);
 					libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 						$scope.branch = branchBookList;
+//						$scope.pagination = Pagination.getNew(10);
+//						$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -104,6 +108,8 @@ lmsApp.controller("bookLoanController",
 			alert(data);
 			libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 				$scope.branch = branchBookList;
+//				$scope.pagination = Pagination.getNew(10);
+//				$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 			});
 		});
 	}

@@ -15,8 +15,8 @@ lmsApp.controller("borrowerController",
 //		alert($scope.user.borrowerId);
 		borrowerService.getUserLoansService($scope.user.borrowerId).then(function(bookLoansList){
 			$scope.loans = bookLoansList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.loans.length / $scope.pagination.perPage);
 //			document.getElementById("viewHeader").innerHTML = "Book Loans For "+$scope.user.borrowerName;
 		});
 	}else if($location.$$path === "/choosebranch") {
@@ -30,21 +30,21 @@ lmsApp.controller("borrowerController",
 		$scope.gotId = libraryService.getData("branchSt");
 		libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 			$scope.branch = branchBookList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 			document.getElementById("viewHeader").innerHTML = "Books In "+$scope.branch.branchName+" Library For User "+$scope.user.borrowerName;
 		});
 	}else if($location.$$path === "/adminbookloans"){
 		borrowerService.getAllLoansService().then(function(allLoansList){
 			$scope.loans = allLoansList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.loans.length / $scope.pagination.perPage);
 		});
 	}else if($location.$$path === "/viewborrowers"){
 		borrowerService.getAllBorrowersService().then(function(allBackendList){
 			$scope.borrowers = allBackendList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.borrowers.length / $scope.pagination.perPage);
 		});
 	}
 	
@@ -105,6 +105,8 @@ lmsApp.controller("borrowerController",
 				alert(response);
 				libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 					$scope.branch = branchBookList;
+					$scope.pagination = Pagination.getNew(10);
+					$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 				});
 			});
 		});
@@ -124,6 +126,8 @@ lmsApp.controller("borrowerController",
 //			});
 //		});
 	}
+	
+	//------ADMIN BOOKLOAN PAGE CONTROLLER-----//
 	
 	$scope.updateDueDate = function(loan) {
 //		alert(JSON.stringify(loan));
@@ -148,21 +152,21 @@ lmsApp.controller("borrowerController",
 				alert(response);
 				borrowerService.getAllLoansService().then(function(allLoansList){
 					$scope.loans = allLoansList;
-//					$scope.pagination = Pagination.getNew(10);
-//					$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+					$scope.pagination = Pagination.getNew(10);
+					$scope.pagination.numPages = Math.ceil($scope.loans.length / $scope.pagination.perPage);
 				});
 			});
 			$scope.editModal = false;
 		}
 	}
 	
-	$scope.dataSearch = function(){
-		bookService.searchService($scope.searchString).then(function(data){
-			$scope.books = data;
-			$scope.pagination = Pagination.getNew(10);
-			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
-		});
-	}
+//	$scope.dataSearch = function(){
+//		bookService.searchService($scope.searchString).then(function(data){
+//			$scope.books = data;
+//			$scope.pagination = Pagination.getNew(10);
+//			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+//		});
+//	}
 	
 	$scope.dataDelete = function(loan) {
 		var dateOutStr = encodeURI(loan.dateChecked.toString());
@@ -170,17 +174,17 @@ lmsApp.controller("borrowerController",
 //		alert(loan.branch.branchId);
 //		alert(loan.borrower.borrowerId);
 //		alert(dateOutStr);
-		borrowerService.deleteBookService(loan.book.bookId, loan.branch.branchId, loan.borrower.borrowerId, dateOutStr).then(function(data){
+		borrowerService.deleteLoanService(loan.book.bookId, loan.branch.branchId, loan.borrower.borrowerId, dateOutStr).then(function(data){
 			alert(data);
 			borrowerService.getAllLoansService().then(function(allLoansList){
 				$scope.loans = allLoansList;
-//				$scope.pagination = Pagination.getNew(10);
-//				$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+				$scope.pagination = Pagination.getNew(10);
+				$scope.pagination.numPages = Math.ceil($scope.loans.length / $scope.pagination.perPage);
 			});
 		});
 	}
 	
-	//------ADMIN PAGE CONTROLLER-----//
+	//------ADMIN BORROWER PAGE CONTROLLER-----//
 	
 	$scope.sortBorrowers = function(){
 		$scope.borrowers = $filter('orderBy')($scope.borrowers, 'borrowerName');
@@ -190,6 +194,9 @@ lmsApp.controller("borrowerController",
 		$scope.add = true;
 		borrowerService.initBorrowerService().then(function(data) {
 			$scope.borrower = data;
+			document.getElementById("modalTitle").innerHTML = "Adding New Borrower for LMS";
+			document.getElementById("modalSave").innerHTML = "Add";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-success");
 			$scope.editModal = true;
 		});
 	}
@@ -203,6 +210,9 @@ lmsApp.controller("borrowerController",
 			$scope.borrower.borrowerAddress = borrower.borrowerAddress;
 			$scope.borrower.borrowerPhone = borrower.borrowerPhone;
 			$scope.add = false;
+			document.getElementById("modalTitle").innerHTML = "Updating Borrower for LMS";
+			document.getElementById("modalSave").innerHTML = "Update";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-primary");
 			$scope.editModal = true;
 		});
 	}
@@ -213,8 +223,8 @@ lmsApp.controller("borrowerController",
 			alert(data);
 			borrowerService.getAllBorrowersService().then(function(backendList){
 				$scope.borrowers = backendList;
-//				$scope.pagination = Pagination.getNew(10);
-//				$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+				$scope.pagination = Pagination.getNew(10);
+				$scope.pagination.numPages = Math.ceil($scope.borrowers.length / $scope.pagination.perPage);
 			});
 		});
 	}
@@ -232,8 +242,8 @@ lmsApp.controller("borrowerController",
 					alert(data);
 					borrowerService.getAllBorrowersService().then(function(backendList){
 						$scope.borrowers = backendList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.borrowers.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -252,8 +262,8 @@ lmsApp.controller("borrowerController",
 					alert(data);
 					borrowerService.getAllBorrowersService().then(function(backendList){
 						$scope.borrowers = backendList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.borrowers.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;

@@ -31,7 +31,7 @@
 		<tbody>
 			<tr
 				ng-repeat="g in genres | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
-				<td>{{$index+1}}</td>
+				<td>{{$index+1+(10*pagination.page)}}</td>
 				<td>{{g.genreName}}</td>
 				<td><button type="button" class="btn btn-primary"
 						ng-click="updateButton(g)">Update</button></td>
@@ -51,7 +51,7 @@
 							aria-label="Close" ng-click="closeModal()">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4 class="modal-title">Update Genre Details</h4>
+						<h4 class="modal-title" id="modalTitle">Update Genre Details</h4>
 					</div>
 					<div class="modal-body" ng-form name="myForm">
 						<label for="genname">Enter the Name of the Genre:</p>
@@ -66,7 +66,7 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							ng-click="closeModal()">Close</button>
 						<button type="button" class="btn btn-primary"
-							ng-click="updateGenre()">Update</button>
+							ng-click="updateGenre()" id="modalSave">Update</button>
 					</div>
 				</div>
 			</div>

@@ -2,8 +2,8 @@ lmsApp.controller("publisherController", function($scope, $http, $window, $locat
 	if($location.$$path === "/viewpublishers"){
 		publisherService.getAllPublishersService().then(function(backendList){
 			$scope.publishers = backendList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.publishers.length / $scope.pagination.perPage);
 		});
 	}
 	
@@ -19,6 +19,9 @@ lmsApp.controller("publisherController", function($scope, $http, $window, $locat
 		$scope.add = true;
 		publisherService.initPublisherService().then(function(data) {
 			$scope.publisher = data;
+			document.getElementById("modalTitle").innerHTML = "Adding New Publisher for LMS";
+			document.getElementById("modalSave").innerHTML = "Add";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-success");
 			$scope.editModal = true;
 		});
 	}
@@ -32,6 +35,9 @@ lmsApp.controller("publisherController", function($scope, $http, $window, $locat
 			$scope.publisher.publisherAddress = publisher.publisherAddress;
 			$scope.publisher.publisherPhone = publisher.publisherPhone;
 			$scope.add = false;
+			document.getElementById("modalTitle").innerHTML = "Updating Publisher for LMS";
+			document.getElementById("modalSave").innerHTML = "Update";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-primary");
 			$scope.editModal = true;
 		});
 	}
@@ -42,8 +48,8 @@ lmsApp.controller("publisherController", function($scope, $http, $window, $locat
 			alert(data);
 			publisherService.getAllPublishersService().then(function(backendList){
 				$scope.publishers = backendList;
-//				$scope.pagination = Pagination.getNew(10);
-//				$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+				$scope.pagination = Pagination.getNew(10);
+				$scope.pagination.numPages = Math.ceil($scope.publishers.length / $scope.pagination.perPage);
 			});
 		});
 	}
@@ -61,8 +67,8 @@ lmsApp.controller("publisherController", function($scope, $http, $window, $locat
 					alert(data);
 					publisherService.getAllPublishersService().then(function(backendList){
 						$scope.publishers = backendList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.publishers.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -81,8 +87,8 @@ lmsApp.controller("publisherController", function($scope, $http, $window, $locat
 					alert(data);
 					publisherService.getAllPublishersService().then(function(backendList){
 						$scope.publishers = backendList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.publishers.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;

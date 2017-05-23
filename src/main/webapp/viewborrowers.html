@@ -34,7 +34,7 @@
 		<tbody>
 			<tr
 				ng-repeat="b in borrowers | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
-				<td>{{$index+1}}</td>
+				<td>{{$index+1+(10*pagination.page)}}</td>
 				<td>{{b.borrowerName}}</td>
 				<td>{{b.borrowerAddress}}</td>
 				<td>{{b.borrowerPhone}}</td>
@@ -56,7 +56,7 @@
 							aria-label="Close" ng-click="closeModal()">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4 class="modal-title">Update Borrower Details</h4>
+						<h4 class="modal-title" id="modalTitle">Update Borrower Details</h4>
 					</div>
 					<div class="modal-body" ng-form name="myForm">
 						<label for="bowname">Enter the Name of the Borrower:</p>
@@ -79,7 +79,7 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							ng-click="closeModal()">Close</button>
 						<button type="button" class="btn btn-primary"
-							ng-click="updateData()">Update</button>
+							ng-click="updateData()" id="modalSave">Update</button>
 					</div>
 				</div>
 			</div>

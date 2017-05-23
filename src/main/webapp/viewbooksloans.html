@@ -17,7 +17,10 @@
 		</ul>
 	</div>
 	<label>Any: <input ng-model="search.$" ng-change="filter()"></label> <br>
-	<label>Name only <input ng-model="search.title" ng-change="filter()">	</label><br>
+	<label>Branch only: <input ng-model="search.branch.branchName" ng-change="filter()">	</label>
+	<label>Book only: <input ng-model="search.book.title" ng-change="filter()">	</label>
+	<label>Due Date only: <input ng-model="search.dateDue" ng-change="filter()">	</label>
+	<label>Date Checked In only: <input ng-model="search.dateIn" ng-change="filter()">	</label><br>
 	<table class="table" id="bookssTable">
 		<thead>
 			<tr>
@@ -33,13 +36,13 @@
 		<tbody>
 			<tr
 				ng-repeat="l in loans | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
-				<td>{{$index+1}}</td>
+				<td>{{$index+1+(10*pagination.page)}}</td>
 				<td>{{l.book.title}}</td>
 				<td>{{l.branch.branchName}}</td>
 				<td>{{l.dateChecked}}</td>
 				<td>{{l.dateDue}}</td>
-				<td>{{l.dateIn || "NOT CHECKED IN"}}</td>
-				<td ng-show="l.dateIn === null"><button type="button" class="btn btn-info"
+				<td>{{l.dateIn || (l.dateIn = "NOT CHECKED IN")}}</td>
+				<td ng-show="l.dateIn === 'NOT CHECKED IN'"><button type="button" class="btn btn-info"
 						ng-click="checkIn(l)">Turn-In</button></td>
 			</tr>
 		</tbody>

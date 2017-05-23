@@ -32,7 +32,7 @@
 		<tbody>
 			<tr
 				ng-repeat="lb in libraries | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
-				<td>{{$index+1}}</td>
+				<td>{{$index+1+(10*pagination.page)}}</td>
 				<td>{{lb.branchName}}</td>
 				<td>{{lb.branchAddress}}</td>
 				<td><button type="button" class="btn btn-primary"
@@ -53,7 +53,7 @@
 							aria-label="Close" ng-click="closeModal()">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4 class="modal-title">Update Library Details</h4>
+						<h4 class="modal-title" id="modalTitle">Update Library Details</h4>
 					</div>
 					<div class="modal-body" ng-form name="myForm">
 						<label for="libname">Enter the details of the Branch Name:</p>
@@ -76,7 +76,7 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							ng-click="closeModal()">Close</button>
 						<button type="button" class="btn btn-primary"
-							ng-click="updateLibrary()">Update</button>
+							ng-click="updateLibrary()" id="modalSave">Update</button>
 					</div>
 				</div>
 			</div>

@@ -2,8 +2,8 @@ lmsApp.controller("genreController", function($scope, $http, $window, $location,
 	if($location.$$path === "/viewgenres"){
 		genreService.getAllGenresService().then(function(backendList){
 			$scope.genres = backendList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.genres.length / $scope.pagination.perPage);
 		});
 	}
 	
@@ -19,6 +19,9 @@ lmsApp.controller("genreController", function($scope, $http, $window, $location,
 		$scope.add = true;
 		genreService.initGenreService().then(function(data) {
 			$scope.genre = data;
+			document.getElementById("modalTitle").innerHTML = "Adding New Genre for LMS";
+			document.getElementById("modalSave").innerHTML = "Add";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-success");
 			$scope.editModal = true;
 		});
 	}
@@ -30,6 +33,9 @@ lmsApp.controller("genreController", function($scope, $http, $window, $location,
 			$scope.genre.genreId = genre.genreId;
 			$scope.genre.genreName = genre.genreName;
 			$scope.add = false;
+			document.getElementById("modalTitle").innerHTML = "Updating Genre for LMS";
+			document.getElementById("modalSave").innerHTML = "Update";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-primary");
 			$scope.editModal = true;
 		});
 	}
@@ -40,8 +46,8 @@ lmsApp.controller("genreController", function($scope, $http, $window, $location,
 			alert(data);
 			genreService.getAllGenresService().then(function(backendList){
 				$scope.genres = backendList;
-//				$scope.pagination = Pagination.getNew(10);
-//				$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+				$scope.pagination = Pagination.getNew(10);
+				$scope.pagination.numPages = Math.ceil($scope.genres.length / $scope.pagination.perPage);
 			});
 		});
 	}
@@ -57,8 +63,8 @@ lmsApp.controller("genreController", function($scope, $http, $window, $location,
 					alert(data);
 					genreService.getAllGenresService().then(function(backendList){
 						$scope.genres = backendList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.genres.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -75,8 +81,8 @@ lmsApp.controller("genreController", function($scope, $http, $window, $location,
 					alert(data);
 					genreService.getAllGenresService().then(function(backendList){
 						$scope.genres = backendList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.genres.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;

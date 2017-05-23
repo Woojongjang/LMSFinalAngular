@@ -94,7 +94,7 @@ lmsApp.factory("borrowerService", function($http, borrowerConstants){
 			})
 		},
 		
-		deleteBookService: function(book, branch, card, date) {
+		deleteLoanService: function(book, branch, card, date) {
 //			alert(book);
 //			alert(branch);
 //			alert(card);

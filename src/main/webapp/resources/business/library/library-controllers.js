@@ -13,8 +13,8 @@ lmsApp.controller("libraryController",
 		$scope.gotId = libraryService.getData("branchSt");
 		libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 			$scope.branch = branchBookList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 			document.getElementById("viewHeader").innerHTML = "Books In "+$scope.branch.branchName+" Library";
 		});
 		bookService.getAllBooksService().then(function(backendBooksList){
@@ -23,8 +23,8 @@ lmsApp.controller("libraryController",
 	}else if($location.$$path === "/viewlibraries"){
 		libraryService.getAllLibrariesService().then(function(backendBranchList){
 			$scope.libraries = backendBranchList;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			$scope.pagination = Pagination.getNew(10);
+			$scope.pagination.numPages = Math.ceil($scope.libraries.length / $scope.pagination.perPage);
 		});
 	}
 	
@@ -102,6 +102,8 @@ lmsApp.controller("libraryController",
 					alert(data);
 					libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 						$scope.branch = branchBookList;
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -117,6 +119,8 @@ lmsApp.controller("libraryController",
 					alert(data);
 					libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
 						$scope.branch = branchBookList;
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -124,10 +128,34 @@ lmsApp.controller("libraryController",
 		}
 	}
 	
+	//	$scope.dataSearch = function(){
+	//	bookService.searchService($scope.searchString).then(function(data){
+	//		$scope.books = data;
+	//		$scope.pagination = Pagination.getNew(10);
+	//		$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+	//	});
+	//}
+	
+	$scope.dataDelete = function(bookId) {
+		libraryService.deleteCountService($scope.gotId, bookId).then(function(data){
+			alert(data);
+			libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
+				$scope.branch = branchBookList;
+				$scope.pagination = Pagination.getNew(10);
+				$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+			});
+		});
+	}
+	
+	//-----ADMIN LIBRARY PAGE-----//
+	
 	$scope.addLibrary = function() {
 		$scope.add = true;
 		libraryService.initLibraryService().then(function(data) {
 			$scope.library = data;
+			document.getElementById("modalTitle").innerHTML = "Adding New Library for LMS";
+			document.getElementById("modalSave").innerHTML = "Add";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-success");
 			$scope.editModal = true;
 		});
 	}
@@ -140,6 +168,9 @@ lmsApp.controller("libraryController",
 			$scope.library.branchName = library.branchName;
 			$scope.library.branchAddress = library.branchAddress;
 			$scope.add = false;
+			document.getElementById("modalTitle").innerHTML = "Updating Library for LMS";
+			document.getElementById("modalSave").innerHTML = "Update";
+			document.getElementById("modalSave").setAttribute("class", "btn btn-primary");
 			$scope.editModal = true;
 		});
 	}
@@ -150,8 +181,8 @@ lmsApp.controller("libraryController",
 			alert(data);
 			libraryService.getAllLibrariesService().then(function(backendBranchList){
 				$scope.libraries = backendBranchList;
-//				$scope.pagination = Pagination.getNew(10);
-//				$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+				$scope.pagination = Pagination.getNew(10);
+				$scope.pagination.numPages = Math.ceil($scope.libraries.length / $scope.pagination.perPage);
 			});
 		});
 	}
@@ -168,8 +199,8 @@ lmsApp.controller("libraryController",
 					alert(data);
 					libraryService.getAllLibrariesService().then(function(backendBranchList){
 						$scope.libraries = backendBranchList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.libraries.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -187,8 +218,8 @@ lmsApp.controller("libraryController",
 					alert(data);
 					libraryService.getAllLibrariesService().then(function(backendBranchList){
 						$scope.libraries = backendBranchList;
-//						$scope.pagination = Pagination.getNew(10);
-//						$scope.pagination.numPages = Math.ceil($scope.branch.books.length / $scope.pagination.perPage);
+						$scope.pagination = Pagination.getNew(10);
+						$scope.pagination.numPages = Math.ceil($scope.libraries.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
@@ -196,20 +227,4 @@ lmsApp.controller("libraryController",
 		}
 	}
 	
-//	$scope.dataSearch = function(){
-//		bookService.searchService($scope.searchString).then(function(data){
-//			$scope.books = data;
-//			$scope.pagination = Pagination.getNew(10);
-//			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
-//		});
-//	}
-//	
-	$scope.dataDelete = function(bookId) {
-		libraryService.deleteCountService($scope.gotId, bookId).then(function(data){
-			alert(data);
-			libraryService.getBranchBooksService($scope.gotId).then(function(branchBookList){
-				$scope.branch = branchBookList;
-			});
-		});
-	}
 })
