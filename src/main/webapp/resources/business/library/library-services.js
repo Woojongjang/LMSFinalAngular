@@ -11,6 +11,56 @@ lmsApp.factory("libraryService", function($http, libraryConstants){
 		setData: setData,
 		getData: getData,
 		
+		initLibraryService: function(){
+			var initData = {};
+			return $http({
+				url: libraryConstants.INIT_BRANCH_URL,
+				method: "GET"
+			}).success(function(data){
+				initData = data;
+			}).then(function(){
+				return initData;
+			})
+		},
+		
+		addLibraryService: function(branch){
+			var retString = "";
+			return $http({
+				url: libraryConstants.LIBRARIES_URL,
+				method: "POST",
+				data: branch
+			}).success(function(data){
+				retString = data;
+			}).then(function(){
+				return retString;
+			})
+		},
+		
+		editLibraryService: function(branch){
+			var retString = "";
+			return $http({
+				url: libraryConstants.LIBRARIES_URL,
+				method: "PUT",
+				data: branch
+			}).success(function(data){
+				retString = data;
+			}).then(function(){
+				return retString;
+			})
+		},
+		
+		deleteLibraryService: function(branchId){
+			var retString = "";
+			return $http({
+				url: libraryConstants.LIBRARIES_URL+branchId,
+				method: "DELETE"
+			}).success(function(data){
+				retString = data;
+			}).then(function(){
+				return retString;
+			})
+		},
+		
 		getAllLibrariesService: function(){
 			var getBranchData = {};
 			return $http({

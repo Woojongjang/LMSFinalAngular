@@ -60,11 +60,13 @@
 					<div class="modal-body" ng-form name="myForm">
 						Book Name: <p class="text-info" ng-show="add === false">{{book.title}}</p>
 						Branch Name: <p class="text-info">{{branch.branchName}}</p>
+						
 						<label for="selbook" ng-show="add === true">Select Book to Add:</label>
 						<select class="form-control" ng-model="book" id="selbook" size="5" ng-show="add === true"
 							ng-options="b as b.title for b in allBooks track by b.bookId"></select></br>
 						<!-- <tt>Book Selected = {{book}}</tt><br/> -->
 						<tt>Count of the Book = {{branch.booksCount[book.bookId]}}</tt><br/>
+						
 						<label for="newCount">Select Number of Books to Set:</label>
 						<input type="number" class="form-control" name="newCount" id="newCount" ng-model="setCount" required
 							placeholder="Input How Many Books There Are..." min="0">

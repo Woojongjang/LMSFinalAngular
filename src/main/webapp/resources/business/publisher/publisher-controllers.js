@@ -1,65 +1,92 @@
-lmsApp.controller("publisherController", function($scope, $http, $window, $location, bookService, $filter, Pagination, authorService){
-	if($location.$$path === "/viewbooks"){
-		bookService.getAllBookssService().then(function(backendBooksList){
-			$scope.books = backendBooksList;
-			$scope.pagination = Pagination.getNew(10);
-			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
-		});
-	}else if($location.$$path === "/addauthor"){
-		$http.get("http://localhost:8080/lms/initAuthor").success(function(backendBooksList){
-			$scope.author = backendBooksList;
+lmsApp.controller("publisherController", function($scope, $http, $window, $location, bookService, $filter, Pagination, publisherService){
+	if($location.$$path === "/viewpublishers"){
+		publisherService.getAllPublishersService().then(function(backendList){
+			$scope.publishers = backendList;
+//			$scope.pagination = Pagination.getNew(10);
+//			$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
 		});
 	}
 	
 	$scope.sort = function(){
-		$scope.books = $filter('orderBy')($scope.books, 'title');
+		$scope.publishers = $filter('orderBy')($scope.publishers, 'publisherName');
 	}
 	
 	$scope.closeModal = function(){
-		$scope.editAuthorModal = false;
+		$scope.editModal = false;
 	}
 	
-	$scope.addBook = function() {
-		bookService.initBookService().then(function(data){
-			$scope.book = data;
-			$scope.add = true;
-			document.getElementById("modalTitle").innerHTML = "Add New Book Details";
-			authorService.getAllAuthorsService().then(function(backendAuthorsList){
-				$scope.authors = backendAuthorsList;
-			});
-			
+	$scope.addPublisher = function() {
+		$scope.add = true;
+		publisherService.initPublisherService().then(function(data) {
+			$scope.publisher = data;
 			$scope.editModal = true;
 		});
 	}
 	
-	$scope.updateDetails = function(){
+	$scope.updateButton = function(publisher) {
+//		alert(library);
+		publisherService.initPublisherService().then(function(data) {
+			$scope.publisher = data;
+			$scope.publisher.publisherId = publisher.publisherId;
+			$scope.publisher.publisherName = publisher.publisherName;
+			$scope.publisher.publisherAddress = publisher.publisherAddress;
+			$scope.publisher.publisherPhone = publisher.publisherPhone;
+			$scope.add = false;
+			$scope.editModal = true;
+		});
+	}
+	
+	$scope.deleteButton = function(publisher) {
+//		alert(library);
+		publisherService.deletePublisherService(publisher.publisherId).then(function(data){
+			alert(data);
+			publisherService.getAllPublishersService().then(function(backendList){
+				$scope.publishers = backendList;
+//				$scope.pagination = Pagination.getNew(10);
+//				$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+			});
+		});
+	}
+	
+	$scope.updateData = function() {
 		if($scope.add) {
-			if($scope.book.title === ""){
-				alert("book name is empty");
-				$scope.editModal = true;
+			if($scope.publisher.publisherName === "" 
+				|| $scope.publisher.publisherName === undefined
+				|| $scope.publisher.publisherName === null) {
+					alert("Required Fields are Empty");
+					$scope.editModal = true;
 			}
 			else {
-				authorService.addAuthorService($scope.author).then(function(data){
+				publisherService.addPublisherService($scope.publisher).then(function(data){
 					alert(data);
-					authorService.getAllAuthorsService().then(function(backendAuthorsList){
-						$scope.authors = backendAuthorsList;
-						$scope.pagination = Pagination.getNew(10);
-						$scope.pagination.numPages = Math.ceil($scope.authors.length / $scope.pagination.perPage);
+					publisherService.getAllPublishersService().then(function(backendList){
+						$scope.publishers = backendList;
+//						$scope.pagination = Pagination.getNew(10);
+//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
 					});
 				});
 				$scope.editModal = false;
 			}
 		}
 		else {
-			$http.put("http://localhost:8080/lms/Authors/", $scope.author).success(function(){
-				authorService.getAllAuthorsService().then(function(backendAuthorsList){
-					$scope.authors = backendAuthorsList;
-					$scope.pagination = Pagination.getNew(10);
-					$scope.pagination.numPages = Math.ceil($scope.authors.length / $scope.pagination.perPage);
+			if($scope.publisher.publisherName === "" 
+				|| $scope.publisher.publisherName === undefined
+				|| $scope.publisher.publisherName === null){
+					alert("Required Fields are Empty");
+					$scope.editModal = true;
+			}
+			else {
+//				alert(JSON.stringify($scope.library));
+				publisherService.editPublisherService($scope.publisher).then(function(data){
+					alert(data);
+					publisherService.getAllPublishersService().then(function(backendList){
+						$scope.publishers = backendList;
+//						$scope.pagination = Pagination.getNew(10);
+//						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
+					});
 				});
-			});
-			$scope.editModal = false;
+				$scope.editModal = false;
+			}
 		}
-//		$scope.editAuthorModal = false;
 	}
 })

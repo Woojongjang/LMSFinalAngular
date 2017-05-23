@@ -2,6 +2,7 @@
 	<div class="page-header">
 		<h1>List of Library Branches in LMS</h1>
 	</div>
+	<button type="button" class="btn btn-success" ng-click="addLibrary()">Add New Branch</button><br/><br/>
 	<div class="input-group">
 		<input type="text" class="form-control" ng-model="searchString"
 			placeholder="Search for..." ng-change="searchAuthors()">
@@ -16,32 +17,33 @@
 		</ul>
 	</div>
 	<label>Any: <input ng-model="search.$" ng-change="filter()"></label> <br>
-	<label>Name only <input ng-model="search.authorName" ng-change="filter()">	</label><br>
-	<label>Book only <input ng-model="searchBook.title" ng-change="filter()"></label><br>
-	<table class="table" id="authorsTable">
+	<label>Name only: <input ng-model="search.branchName" ng-change="filter()">	</label><br>
+	<label>Address only: <input ng-model="search.branchAddress" ng-change="filter()">	</label><br>
+	<table class="table" id="libraryTable">
 		<thead>
 			<tr>
 				<th>#</th>
-				<th><a ng-click="sort()">Author Name</a></th>
-				<th>Books</th>
+				<th><a ng-click="sortBranch()">Branch Name</a></th>
+				<th>Branch Address</th>
 				<th>Edit</th>
 				<th>Delete</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr
-				ng-repeat="a in authors | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
-				<td>{{$index+1+(10*pagination.page)}}</td>
-				<td>{{a.authorName}}</td>
-				<td><span ng-repeat="b in a.books | filter:searchBook:strict">{{b.title}} |</span>
+				ng-repeat="lb in libraries | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
+				<td>{{$index+1}}</td>
+				<td>{{lb.branchName}}</td>
+				<td>{{lb.branchAddress}}</td>
 				<td><button type="button" class="btn btn-primary"
-						ng-click="showEditAuthorModal(a.authorId)">Update</button></td>
-				<td><button type="button" class="btn btn-danger">Delete</button></td>
+						ng-click="updateButton(lb)">Update</button></td>
+				<td><button type="button" class="btn btn-danger"
+						ng-click="deleteButton(lb)">Delete</button></td>
 			</tr>
 		</tbody>
 	</table>
-	<div class="modal fade bs-example-modal-lg" id="editAuthorModal"
-		modal="editAuthorModal" tabindex="-1" role="dialog"
+	<div class="modal fade bs-example-modal-lg" id="editModal"
+		modal="editModal" tabindex="-1" role="dialog"
 		aria-labelledby="myLargeModalLabel">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
@@ -51,17 +53,30 @@
 							aria-label="Close" ng-click="closeModal()">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4 class="modal-title">Update Author Details</h4>
+						<h4 class="modal-title">Update Library Details</h4>
 					</div>
-					<div class="modal-body">
-						<p>Enter the details of your Author:</p>
-						<input type="text" ng-model="author.authorName"> <br />
+					<div class="modal-body" ng-form name="myForm">
+						<label for="libname">Enter the details of the Branch Name:</p>
+						<input type="text" ng-model="library.branchName" id="libname" name="libname" required>
+						<br />
+						<div role="alert">
+							<span class="error" ng-show="myForm.libname.$error.required"
+								style="color: red"> Branch Name Required!</span>
+						</div>
+						
+						<label for="libaddr">Enter the details of the Branch Address:</p>
+						<input type="text" ng-model="library.branchAddress" id="libaddr" name="libaddr" required>
+						<br />
+						<div role="alert">
+							<span class="error" ng-show="myForm.libaddr.$error.required"
+								style="color: red"> Branch Address Required!</span>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							ng-click="closeModal()">Close</button>
 						<button type="button" class="btn btn-primary"
-							ng-click="updateAuthor()">Update</button>
+							ng-click="updateLibrary()">Update</button>
 					</div>
 				</div>
 			</div>

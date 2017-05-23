@@ -137,6 +137,68 @@ lmsApp.factory("borrowerService", function($http, borrowerConstants){
 			}).then(function(){
 				return retUpdate;
 			})
+		},
+		
+		initBorrowerService: function(){
+			var initData = {};
+			return $http({
+				url: borrowerConstants.INIT_BORROWER_URL,
+				method: "GET"
+			}).success(function(data){
+				initData = data;
+			}).then(function(){
+				return initData;
+			})
+		},
+		
+		addBorrowerService: function(borrower){
+			var retString = "";
+			return $http({
+				url: borrowerConstants.ADMIN_BORROWERS_URL,
+				method: "POST",
+				data: borrower
+			}).success(function(data){
+				retString = data;
+			}).then(function(){
+				return retString;
+			})
+		},
+		
+		editBorrowerService: function(borrower){
+			var retString = "";
+			return $http({
+				url: borrowerConstants.ADMIN_BORROWERS_URL,
+				method: "PUT",
+				data: borrower
+			}).success(function(data){
+				retString = data;
+			}).then(function(){
+				return retString;
+			})
+		},
+		
+		deleteBorrowerService: function(borrowerId){
+			var retString = "";
+			return $http({
+				url: borrowerConstants.ADMIN_BORROWERS_URL+borrowerId,
+				method: "DELETE"
+			}).success(function(data){
+				retString = data;
+			}).then(function(){
+				return retString;
+			})
+		},
+		
+		getAllBorrowersService: function(){
+			var getData = {};
+			return $http({
+				url: borrowerConstants.ADMIN_BORROWERS_URL,
+				method: "GET"
+			}).success(function(data){
+				getData = data;
+			}).then(function(){
+				return getData;
+			})
 		}
 	}
 })
