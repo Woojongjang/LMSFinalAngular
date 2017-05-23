@@ -183,36 +183,36 @@ lmsApp.controller("borrowerController",
 	//------ADMIN PAGE CONTROLLER-----//
 	
 	$scope.sortBorrowers = function(){
-		$scope.publishers = $filter('orderBy')($scope.publishers, 'publisherName');
+		$scope.borrowers = $filter('orderBy')($scope.borrowers, 'borrowerName');
 	}
 	
-	$scope.addPublisher = function() {
+	$scope.addBorrower = function() {
 		$scope.add = true;
-		publisherService.initPublisherService().then(function(data) {
-			$scope.publisher = data;
+		borrowerService.initBorrowerService().then(function(data) {
+			$scope.borrower = data;
 			$scope.editModal = true;
 		});
 	}
 	
-	$scope.updateButton = function(publisher) {
+	$scope.updateButton = function(borrower) {
 //		alert(library);
-		publisherService.initPublisherService().then(function(data) {
-			$scope.publisher = data;
-			$scope.publisher.publisherId = publisher.publisherId;
-			$scope.publisher.publisherName = publisher.publisherName;
-			$scope.publisher.publisherAddress = publisher.publisherAddress;
-			$scope.publisher.publisherPhone = publisher.publisherPhone;
+		borrowerService.initBorrowerService().then(function(data) {
+			$scope.borrower = data;
+			$scope.borrower.borrowerId = borrower.borrowerId;
+			$scope.borrower.borrowerName = borrower.borrowerName;
+			$scope.borrower.borrowerAddress = borrower.borrowerAddress;
+			$scope.borrower.borrowerPhone = borrower.borrowerPhone;
 			$scope.add = false;
 			$scope.editModal = true;
 		});
 	}
 	
-	$scope.deleteButton = function(publisher) {
+	$scope.deleteButton = function(borrower) {
 //		alert(library);
-		publisherService.deletePublisherService(publisher.publisherId).then(function(data){
+		borrowerService.deleteBorrowerService(borrower.borrowerId).then(function(data){
 			alert(data);
-			publisherService.getAllPublishersService().then(function(backendList){
-				$scope.publishers = backendList;
+			borrowerService.getAllBorrowersService().then(function(backendList){
+				$scope.borrowers = backendList;
 //				$scope.pagination = Pagination.getNew(10);
 //				$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
 			});
@@ -221,17 +221,17 @@ lmsApp.controller("borrowerController",
 	
 	$scope.updateData = function() {
 		if($scope.add) {
-			if($scope.publisher.publisherName === "" 
-				|| $scope.publisher.publisherName === undefined
-				|| $scope.publisher.publisherName === null) {
+			if($scope.borrower.borrowerName === "" 
+				|| $scope.borrower.borrowerName === undefined
+				|| $scope.borrower.borrowerName === null) {
 					alert("Required Fields are Empty");
 					$scope.editModal = true;
 			}
 			else {
-				publisherService.addPublisherService($scope.publisher).then(function(data){
+				borrowerService.addBorrowerService($scope.borrower).then(function(data){
 					alert(data);
-					publisherService.getAllPublishersService().then(function(backendList){
-						$scope.publishers = backendList;
+					borrowerService.getAllBorrowersService().then(function(backendList){
+						$scope.borrowers = backendList;
 //						$scope.pagination = Pagination.getNew(10);
 //						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
 					});
@@ -240,18 +240,18 @@ lmsApp.controller("borrowerController",
 			}
 		}
 		else {
-			if($scope.publisher.publisherName === "" 
-				|| $scope.publisher.publisherName === undefined
-				|| $scope.publisher.publisherName === null){
+			if($scope.borrower.borrowerName === "" 
+				|| $scope.borrower.borrowerName === undefined
+				|| $scope.borrower.borrowerName === null){
 					alert("Required Fields are Empty");
 					$scope.editModal = true;
 			}
 			else {
 //				alert(JSON.stringify($scope.library));
-				publisherService.editPublisherService($scope.publisher).then(function(data){
+				borrowerService.editBorrowerService($scope.borrower).then(function(data){
 					alert(data);
-					publisherService.getAllPublishersService().then(function(backendList){
-						$scope.publishers = backendList;
+					borrowerService.getAllBorrowersService().then(function(backendList){
+						$scope.borrowers = backendList;
 //						$scope.pagination = Pagination.getNew(10);
 //						$scope.pagination.numPages = Math.ceil($scope.books.length / $scope.pagination.perPage);
 					});

@@ -1,8 +1,8 @@
 <div ng-controller="borrowerController" class="container">
 	<div class="page-header">
-		<h1>List of Publishers in LMS</h1>
+		<h1>List of Borrowers in LMS</h1>
 	</div>
-	<button type="button" class="btn btn-success" ng-click="addPublisher()">Add New Publisher</button><br/><br/>
+	<button type="button" class="btn btn-success" ng-click="addBorrower()">Add New Borrower</button><br/><br/>
 	<div class="input-group">
 		<input type="text" class="form-control" ng-model="searchString"
 			placeholder="Search for..." ng-change="searchAuthors()">
@@ -17,31 +17,31 @@
 		</ul>
 	</div>
 	<label>Any: <input ng-model="search.$" ng-change="filter()"></label> <br>
-	<label>Name only: <input ng-model="search.branchName" ng-change="filter()">	</label>
-	<label>Address only: <input ng-model="search.publisherAddress" ng-change="filter()">	</label>
-	<label>Phone only: <input ng-model="search.publisherPhone" ng-change="filter()">	</label>
+	<label>Name only: <input ng-model="search.borrowerName" ng-change="filter()">	</label>
+	<label>Address only: <input ng-model="search.borrowerAddress" ng-change="filter()">	</label>
+	<label>Phone only: <input ng-model="search.borrowerPhone" ng-change="filter()">	</label>
 	<table class="table" id="publisherTable">
 		<thead>
 			<tr>
 				<th>#</th>
-				<th><a ng-click="sortBorrowers()">Publisher Name</a></th>
-				<th>Publisher Address</th>
-				<th>Publisher Phone</th>
+				<th><a ng-click="sortBorrowers()">Borrower Name</a></th>
+				<th>Borrower Address</th>
+				<th>Borrower Phone</th>
 				<th>Edit</th>
 				<th>Delete</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr
-				ng-repeat="p in publishers | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
+				ng-repeat="b in borrowers | filter:search | startFrom: pagination.page * pagination.perPage | limitTo: pagination.perPage">
 				<td>{{$index+1}}</td>
-				<td>{{p.publisherName}}</td>
-				<td>{{p.publisherAddress}}</td>
-				<td>{{p.publisherPhone}}</td>
+				<td>{{b.borrowerName}}</td>
+				<td>{{b.borrowerAddress}}</td>
+				<td>{{b.borrowerPhone}}</td>
 				<td><button type="button" class="btn btn-primary"
-						ng-click="updateButton(p)">Update</button></td>
+						ng-click="updateButton(b)">Update</button></td>
 				<td><button type="button" class="btn btn-danger"
-						ng-click="deleteButton(p)">Delete</button></td>
+						ng-click="deleteButton(b)">Delete</button></td>
 			</tr>
 		</tbody>
 	</table>
@@ -56,23 +56,23 @@
 							aria-label="Close" ng-click="closeModal()">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4 class="modal-title">Update Publisher Details</h4>
+						<h4 class="modal-title">Update Borrower Details</h4>
 					</div>
 					<div class="modal-body" ng-form name="myForm">
-						<label for="pubname">Enter the Name of the Publisher:</p>
-						<input type="text" ng-model="publisher.publisherName" id="pubname" name="pubname" required>
+						<label for="bowname">Enter the Name of the Borrower:</p>
+						<input type="text" ng-model="borrower.borrowerName" id="bowname" name="bowname" required>
 						<br />
 						<div role="alert">
-							<span class="error" ng-show="myForm.pubname.$error.required"
-								style="color: red"> Publisher Name Required!</span>
+							<span class="error" ng-show="myForm.bowname.$error.required"
+								style="color: red"> Borrower Name Required!</span>
 						</div>
 						
-						<label for="pubaddr">Enter the details of the Publisher Address:</p>
-						<input type="text" ng-model="publisher.publisherAddress" id="pubaddr" name="pubaddr">
+						<label for="bowaddr">Enter the details of the Borrower Address:</p>
+						<input type="text" ng-model="borrower.borrowerAddress" id="bowaddr" name="bowaddr">
 						<br />
 						
-						<label for="pubphn">Enter the details of the Publisher Phone:</p>
-						<input type="text" ng-model="publisher.publisherPhone" id="pubphn" name="pubphn">
+						<label for="bowphn">Enter the details of the Borrower Phone:</p>
+						<input type="text" ng-model="borrower.borrowerPhone" id="bowphn" name="bowphn">
 						<br />
 					</div>
 					<div class="modal-footer">

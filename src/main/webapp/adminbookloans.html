@@ -16,7 +16,11 @@
 		</ul>
 	</div>
 	<label>Any: <input ng-model="search.$" ng-change="filter()"></label> <br>
-	<label>Name only <input ng-model="search.title" ng-change="filter()">	</label><br>
+	<label>Name only: <input ng-model="search.borrower.borrowerName" ng-change="filter()">	</label>
+	<label>Branch only: <input ng-model="search.branch.branchName" ng-change="filter()">	</label>
+	<label>Book only: <input ng-model="search.book.title" ng-change="filter()">	</label>
+	<label>Due Date only: <input ng-model="search.dateDue" ng-change="filter()">	</label>
+	<label>Date Checked In only: <input ng-model="search.dateIn" ng-change="filter()">	</label><br>
 	<table class="table" id="bookssTable">
 		<thead>
 			<tr>
@@ -40,7 +44,7 @@
 				<td>{{l.branch.branchName}}</td>
 				<td>{{l.dateChecked}}</td>
 				<td>{{l.dateDue}}</td>
-				<td>{{l.dateIn || "NOT CHECKED IN"}}</td>
+				<td>{{l.dateIn || (l.dateIn = "NOT CHECKED IN")}}</td>
 				<td><button type="button" class="btn btn-primary"
 						ng-click="updateDueDate(l)">Update</button></td>
 				<td><button type="button" class="btn btn-danger" ng-click="dataDelete(l)">Delete</button></td>
